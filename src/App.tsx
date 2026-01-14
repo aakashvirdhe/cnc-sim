@@ -1,6 +1,40 @@
+import { useEffect } from 'react';
 import './App.css'
 
 function App() {
+  useEffect(() => {
+    setTimeout(() => {
+    // TODO
+    // Lathe tool
+    // Check input forms
+    (window as any).controller = new (window as any).CWS.Controller(
+      new (window as any).CWS.CodeEditor(),
+      new (window as any).CWS.Storage({ useCompression: true, useLocalStorage: true }),
+      new (window as any).CWS.Renderer("renderer1"),
+      new (window as any).CWS.Motion(),
+      true
+    );
+
+    (window as any).ui = new (window as any).CWS.UI((window as any).controller);
+    var stats = (window as any).ui.createStats(true);
+
+    function onWindowResize() {
+      (window as any).controller.windowResize();
+      (window as any).ui.resize();
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      stats.update();
+      (window as any).controller.motion.run();
+      (window as any).controller.render();
+    }
+    animate();
+
+    window.addEventListener('resize', onWindowResize, false);
+    (window as any).controller.runInterpreter();
+    }, 100);
+  }, []);
 
   return (
     <>
@@ -52,8 +86,8 @@ function App() {
         <span title="Display wireframe" id="wireframeIcon" className="icon-codepen"></span>
         <span title="Auto Run" id="autoRunIcon" className="icon-spinner9"></span>
         <span title="Save" id="saveIcon" className="icon-floppy-disk"></span>
-        <span title="Simulate 2D" id="run2DIcon">2D Path Simulation</span>
-        <span title="Simulate 3D" id="run3DIcon">Final 3D Preview</span>
+        <span title="Simulate 2D" id="run2DIcon">2D</span>
+        <span title="Simulate 3D" id="run3DIcon">3D</span>
       </div>
     </>
   )

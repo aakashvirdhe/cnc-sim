@@ -109,10 +109,12 @@ CWS.UI.prototype.resize = function () {
 	else
 		editorWidth = this.elementEditor.innerWidth();
 
-	this.elementTopMenu.innerWidth(width - editorWidth);
-	this.elementCanvasContainer.innerWidth(width - editorWidth);
-	this.controller.renderer.setSize(width - editorWidth, height);
-	this.elementBottomMenu.innerWidth(width - editorWidth);
+	var canvasWidth = Math.max(1, width - editorWidth);
+	this.elementTopMenu.css('right', editorWidth + 'px');
+	this.elementTopMenu.innerWidth(canvasWidth);
+	this.elementCanvasContainer.innerWidth(canvasWidth);
+	this.controller.renderer.setSize(canvasWidth, height - 75); // adjust height for menus
+	this.elementBottomMenu.innerWidth(canvasWidth);
 };
 
 CWS.UI.prototype.createStats = function (v) {
