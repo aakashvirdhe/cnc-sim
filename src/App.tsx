@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import './App.css'
 import TopBar from './components/TopBar';
 import BottomBar from './components/BottomBar';
@@ -15,12 +15,14 @@ import { Lathe } from './core/machines/Lathe';
 import { Mill } from './core/machines/Mill';
 import { Motion } from './core/Motion';
 import { Controller } from './core/Controller';
+import { DialogManager } from './components/DialogManager';
 import { Printer } from './core/machines/Printer';
 
 function App() {
   const [editorWidth, setEditorWidth] = useState(400);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const [controller, setController] = useState<any>(null);
 
   // Initialize controller and UI (existing logic)
   useEffect(() => {
@@ -47,27 +49,42 @@ function App() {
       // TODO
       // Lathe tool
       // Check input forms
-      (window as any).controller = new Controller(
+      const ctrl = new Controller(
         new EditorService(),
         new StorageService({ useCompression: true, useLocalStorage: true }),
         new Renderer("renderer1"),
         new Motion(),
         true
       );
+      (window as any).controller = ctrl;
+      setController(ctrl); // Store controller for React
 
-      (window as any).ui = new (window as any).CWS.UI((window as any).controller);
-      var stats = (window as any).ui.createStats(true);
+      // Stats setup
+      let stats: any = { update: () => { } };
+      if (typeof (window as any).Stats !== 'undefined') {
+        const s = new (window as any).Stats();
+        s.domElement.style.position = 'absolute';
+        s.domElement.style.bottom = '0px';
+        s.domElement.style.right = '0px';
+        const container = document.getElementById("canvasContainer");
+        if (container) container.appendChild(s.domElement);
+        stats = s;
+      }
 
       function onWindowResize() {
-        (window as any).controller.windowResize();
-        (window as any).ui.resize();
+        if ((window as any).controller) (window as any).controller.windowResize();
+        // UI resize no longer needed as CSS handles it
       }
 
       function animate() {
         requestAnimationFrame(animate);
         stats.update();
-        (window as any).controller.motion.run();
-        (window as any).controller.render();
+        if ((window as any).controller && (window as any).controller.motion) {
+          (window as any).controller.motion.run();
+        }
+        if ((window as any).controller) {
+          (window as any).controller.render();
+        }
       }
       animate();
 
@@ -142,6 +159,7 @@ function App() {
       fontFamily: 'var(--font-family)'
     }}>
       <div className="control-column">
+        {controller && <DialogManager controller={controller} />}
         <TopBar />
         <CanvasView />
         <BottomBar />
