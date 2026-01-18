@@ -1751,8 +1751,8 @@ body {
 #gui,
 .dg.ac {
 	position: absolute !important;
-	top: 48px !important;
-	/* Below top bar */
+	top: 0px !important;
+	/* Top of canvas container */
 	right: 0 !important;
 	z-index: 1000 !important;
 	float: none !important;
@@ -1760,10 +1760,9 @@ body {
 }
 
 /* Ensure Canvas doesn't move */
+/* Removed duplicate absolute positioning to let Grid handle layout */
 #canvasContainer {
-	position: absolute;
-	top: 0;
-	left: 0;
+	position: relative;
 	width: 100%;
 	height: 100%;
 	z-index: 1;
@@ -1966,12 +1965,127 @@ ul {
 	transform: translateY(-2px);
 }
 
+/* Restore tableList icon styles */
 .tableList span.icon {
 	font-size: 40px !important;
 	color: var(--accent-color);
 	display: block;
 	padding-bottom: 10px;
 	margin-bottom: 5px;
+}
+
+/* Dialog Inner Content Styling */
+.ui-dialog form ul {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.ui-dialog form li {
+	margin-bottom: 15px;
+}
+
+.ui-dialog form label {
+	display: block;
+	margin-bottom: 5px;
+	color: var(--text-secondary);
+	font-weight: 500;
+}
+
+.ui-dialog form input[type="text"],
+.ui-dialog form input[type="number"] {
+	width: 100%;
+	padding: 8px 10px;
+	background-color: var(--bg-primary);
+	border: 1px solid var(--border-color);
+	color: var(--text-primary);
+	border-radius: 4px;
+	box-sizing: border-box;
+}
+
+.ui-dialog form input[type="radio"] {
+	margin-right: 8px;
+	vertical-align: middle;
+}
+
+/* Close Button Fix */
+.ui-dialog-titlebar-close {
+	position: absolute !important;
+	/* Force absolute to place it relative to titlebar */
+	right: 10px !important;
+	top: 50% !important;
+	transform: translateY(-50%) !important;
+
+	width: 28px !important;
+	height: 28px !important;
+	padding: 0 !important;
+	margin: 0 !important;
+
+	background: transparent !important;
+	border: none !important;
+	border-radius: 4px;
+
+	display: flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+
+	color: var(--text-secondary);
+	cursor: pointer;
+	/* Reset inherited button properties that might shift text */
+	text-indent: 0 !important;
+	min-width: 0 !important;
+	letter-spacing: normal !important;
+	word-spacing: normal !important;
+	box-shadow: none !important;
+	text-align: center !important;
+}
+
+.ui-dialog-titlebar-close:hover {
+	background-color: rgba(255, 255, 255, 0.1) !important;
+	/* Subtle hover background */
+	color: var(--danger-color) !important;
+}
+
+.ui-dialog-titlebar-close:before {
+	content: "×";
+	font-size: 24px;
+	line-height: 1;
+	/* Normalize line height */
+	display: block;
+	/* Reset margins explicitly */
+	margin: 0 !important;
+	padding: 0 !important;
+	position: static !important;
+}
+
+/* Hide the default jQuery UI icon inside the close button so our 'X' shows up centered */
+.ui-dialog-titlebar-close .ui-icon {
+	display: none !important;
+}
+
+/* Fix TopBar Icon Spacing */
+#topMenu [class^="icon-"],
+#topMenu [class*=" icon-"] {
+	margin-right: 8px !important;
+}
+
+/* Ensure sub-menu items also have spacing */
+#topMenu ul ul li div [class^="icon-"] {
+	margin-right: 10px !important;
+}
+
+/* Project Info Display in TopBar */
+#projectInfoDisplay {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	font-weight: 600;
+	color: var(--text-primary);
+	font-size: 0.95rem;
+	white-space: nowrap;
+	pointer-events: none;
+	/* Let clicks pass through if needed */
 }
 
 /* Hide 3D Printer icon if it exists somehow */

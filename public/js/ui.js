@@ -4,11 +4,12 @@
 CWS.UI = function (controller) {
 	this.controller = controller;
 	var topMenu = $("#topMenu");
-	$("#topMenu>nav > ul > li").each(function (i) {
-		$(this)
-			.mouseenter(function () { topMenu.css('height', '90px'); })
-			.mouseleave(function () { topMenu.css('height', '45px'); })
-	});
+	// Removed legacy hover resize logic as it conflicts with new dropdown behavior
+	// $("#topMenu>nav > ul > li").each(function (i) {
+	// 	$(this)
+	// 		.mouseenter(function () { topMenu.css('height', '90px'); })
+	// 		.mouseleave(function () { topMenu.css('height', '45px'); })
+	// });
 	topMenu.click(
 		function (ev) {
 			var title = ev.target.title
@@ -203,30 +204,73 @@ CWS.DialogBox.prototype.newProject = function (controller) {
 };
 
 CWS.DialogBox.prototype.openProject = function (controller) {
-	html = '<ul class="tableList">';
+	// Toolbar for deletion
+	var toolbar = $('<div style="margin-bottom: 10px; padding: 5px; border-bottom: 1px solid var(--border-color);">' +
+		'<button id="btnSelectAll" class="ui-button" style="margin-right: 5px; font-size: 0.8em; width: auto !important;">All</button>' +
+		'<button id="btnSelectNone" class="ui-button" style="margin-right: 5px; font-size: 0.8em; width: auto !important;">None</button>' +
+		'<button id="btnDeleteSelected" class="ui-button" style="margin-left: 10px; font-size: 0.8em; background-color: var(--danger-color) !important; color: white !important; width: auto !important;">Delete</button>' +
+		'</div>');
+
+	var html = '<ul class="tableList">';
 	var fileList = Object.keys(controller.listProjects());
 	for (var i = 0; i < fileList.length; i++) {
-		html += '<li><span class="icon icon-file-text2"></span>' + fileList[i] + '</li>';
+		html += '<li data-project="' + fileList[i] + '" style="position: relative; padding-left: 40px;">' +
+			'<input type="checkbox" class="project-checkbox" value="' + fileList[i] + '" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: auto; margin: 0; z-index: 10;">' +
+			'<span class="icon icon-file-text2"></span>' + fileList[i] + '</li>';
 	}
 	html += "</ul>";
+
 	var dialog = this.dialog;
-	html = $(html).click(function (event) {
-		if (event.target.parentElement.tagName.toLocaleLowerCase() == "div")
-			return;
-		var projectName = "";
-		if (event.target.tagName.toLocaleLowerCase() == "li") {
-			projectName = event.target.textContent;
-		}
-		else {
-			projectName = event.target.parentElement.textContent;
-		}
-		controller.openProject(projectName);
-		dialog.dialog("close");
-	});
+	this.dialog.append(toolbar);
 	this.dialog.append(html);
+
+	// Event Handlers - Attach directly to the created elements to ensure they are bound
+	// before being added to the DOM or if they are in a fragment.
+	toolbar.find('#btnSelectAll').click(function () {
+		dialog.find('.project-checkbox').prop('checked', true);
+	});
+
+	toolbar.find('#btnSelectNone').click(function () {
+		dialog.find('.project-checkbox').prop('checked', false);
+	});
+
+	toolbar.find('#btnDeleteSelected').click(function () {
+		var selected = [];
+		// Use dialog.find because .project-checkbox might not be in the document yet if scoped incorrectly,
+		// though normally safe if looking within 'dialog' context.
+		dialog.find('.project-checkbox:checked').each(function () {
+			selected.push($(this).val());
+		});
+
+		if (selected.length > 0) {
+			// Replace native confirm with custom dialog
+			var d = new CWS.DialogBox("Confirm Deletion");
+			d.confirmDeleteProjects(controller, selected);
+		} else {
+			alert("Select projects to delete");
+		}
+	});
+
+	// Use delegated events for the list items since they are dynamic string HTML
+	this.dialog.on('click', '.project-checkbox', function (e) {
+		e.stopPropagation();
+	});
+
+	this.dialog.on('click', 'li', function (event) {
+		// Ignore if clicking the checkbox itself (handled above, but double check target)
+		if ($(event.target).is(':checkbox') || $(event.target).hasClass('project-checkbox')) return;
+
+		var projectName = $(this).data('project');
+		if (projectName) {
+			controller.openProject(projectName);
+			dialog.dialog("close");
+		}
+	});
+
 	this.dialog.dialog(
 		{
-			width: 400,
+			width: 450,
+			title: "Open Project (Select to Delete)",
 			buttons:
 			{
 				"Cancel": function () {
@@ -234,6 +278,34 @@ CWS.DialogBox.prototype.openProject = function (controller) {
 				}
 			}
 		});
+};
+
+CWS.DialogBox.prototype.confirmDeleteProjects = function (controller, projectList) {
+	var html = '<div style="padding: 10px;"><p>Are you sure you want to delete the following projects?</p>' +
+		'<ul class="tableList" style="max-height: 200px; overflow-y: auto; margin-top: 10px;">';
+
+	for (var i = 0; i < projectList.length; i++) {
+		html += '<li><span class="icon icon-file-text2"></span>' + projectList[i] + '</li>';
+	}
+	html += '</ul></div>';
+
+	this.dialog.append(html);
+	this.dialog.dialog({
+		width: 450,
+		title: "Confirm Deletion",
+		modal: true,
+		buttons: {
+			"Delete": function () {
+				controller.deleteProjects(projectList);
+				$(this).dialog("close");
+			},
+			"Cancel": function () {
+				// Re-open the project list dialog
+				var d = new CWS.DialogBox("Open Project");
+				d.openProject(controller);
+			}
+		}
+	});
 };
 
 CWS.DialogBox.prototype.openMachine = function (controller) {

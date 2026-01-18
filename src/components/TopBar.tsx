@@ -2,6 +2,40 @@
 import React from 'react';
 
 const TopBar: React.FC = () => {
+    const [projectInfo, setProjectInfo] = React.useState({ name: '', machine: '' });
+
+    React.useEffect(() => {
+        const handleProjectUpdate = (e: CustomEvent) => {
+            if (e.detail) {
+                setProjectInfo({
+                    name: e.detail.projectName,
+                    machine: e.detail.machineType
+                });
+            }
+        };
+
+        window.addEventListener('projectUpdated', handleProjectUpdate as EventListener);
+
+        // Initial check if controller exists (might be racing)
+        const checkController = setInterval(() => {
+            if ((window as any).controller && (window as any).controller.storage) {
+                const storage = (window as any).controller.storage;
+                if (storage.header) {
+                    setProjectInfo({
+                        name: storage.header.name || 'Untitled',
+                        machine: storage.machineType || 'Lathe'
+                    });
+                    clearInterval(checkController);
+                }
+            }
+        }, 500);
+
+        return () => {
+            window.removeEventListener('projectUpdated', handleProjectUpdate as EventListener);
+            clearInterval(checkController);
+        };
+    }, []);
+
     return (
         <div id="topMenu">
             <nav>
@@ -38,6 +72,11 @@ const TopBar: React.FC = () => {
                     </li>
                 </ul>
             </nav>
+
+            <div id="projectInfoDisplay">
+                Project: {projectInfo.name} - {projectInfo.machine}
+            </div>
+
             <span id="machineIcon"></span>
         </div>
     );

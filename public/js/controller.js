@@ -87,11 +87,17 @@ CWS.Controller.prototype =
 
 CWS.Controller.prototype.constructor = CWS.Controller;
 
-CWS.Controller.prototype.createProject = function (data) {
+CWS.Controller.prototype.createProject = function (data, saveCurrent) {
     if (data['projectName'] == "" || data['projectName'] === undefined)
         return;
-    var projectName = this.storage.createNewProject(data['projectName'], data['machineType'], true);
-    this.openProject(projectName);
+
+    // Default to true if not provided
+    if (saveCurrent === undefined) saveCurrent = true;
+
+    var projectName = this.storage.createNewProject(data['projectName'], data['machineType'], saveCurrent);
+    // When opening the just-created project, we don't need to save "current" again 
+    // because createNewProject already sets it as current.
+    this.openProject(projectName, false);
     return projectName;
 };
 
@@ -99,8 +105,34 @@ CWS.Controller.prototype.listProjects = function () {
     return this.storage.projectNames;
 };
 
-CWS.Controller.prototype.openProject = function (projectName) {
-    this.storage.loadProject(projectName, true);
+CWS.Controller.prototype.deleteProjects = function (projectNames) {
+    if (!projectNames || projectNames.length === 0) return;
+
+    for (var i = 0; i < projectNames.length; i++) {
+        this.storage.deleteProject(projectNames[i]);
+    }
+
+    // Check if we have any projects left
+    var projects = this.listProjects();
+    var keys = Object.keys(projects);
+
+    if (keys.length === 0) {
+        // Create default project if all deleted "to maintain fresh launch behavior"
+        // Pass false to createProject to prevent saving the old (now deleted) project state
+        this.createProject({ projectName: "Default", machineType: "Lathe" }, false);
+    } else {
+        // If current project was deleted, open the first available one WITHOUT saving the current (deleted) state
+        if (projectNames.indexOf(this.storage.header.name) !== -1) {
+            this.openProject(keys[0], false);
+        }
+    }
+};
+
+CWS.Controller.prototype.openProject = function (projectName, saveCurrent) {
+    // Default to true if not provided
+    if (saveCurrent === undefined) saveCurrent = true;
+
+    this.storage.loadProject(projectName, saveCurrent);
 
     // For old versions
     if (this.storage.machineType === "Lathe" && this.storage.machine.tool === undefined) {
@@ -110,6 +142,14 @@ CWS.Controller.prototype.openProject = function (projectName) {
     }
     this.loadMachine();
     this.editor.setCode(this.storage.code);
+
+    // Dispatch event for React UI to update
+    window.dispatchEvent(new CustomEvent('projectUpdated', {
+        detail: {
+            projectName: this.storage.header.name,
+            machineType: this.storage.machineType
+        }
+    }));
 };
 
 CWS.Controller.prototype.loadMachine = function () {
@@ -133,7 +173,7 @@ CWS.Controller.prototype.loadMachine = function () {
             machine: this.storage.machine,
             material3D: this.material3D,
             workpiece: this.storage.workpiece,
-            renderResolution: 4048
+            renderResolution: 1024
         });
         this.renderer.lookAtMill({
             x: this.storage.workpiece.x,
