@@ -32,7 +32,7 @@ const TopBar: React.FC = () => {
                         <div><span title="Workpiece" className="icon icon-codepen"></span>Workpiece</div>
                         <ul>
                             <li>
-                                <div title="Workpiece dimensions">Dimensions</div>
+                                <div id="openWorkpiece" title="Workpiece dimensions">Dimensions</div>
                             </li>
                         </ul>
                     </li>

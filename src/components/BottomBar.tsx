@@ -1,16 +1,46 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 
 const BottomBar: React.FC = () => {
+    // State to track active toggles
+    const [activeToggles, setActiveToggles] = useState<{ [key: string]: boolean }>({
+        toolpath: false,
+        jobPreview: false
+    });
+
+    const toggle = (key: string) => {
+        setActiveToggles(prev => ({
+            ...prev,
+            [key]: !prev[key]
+        }));
+    };
+
     return (
         <div id="bottomMenu">
-            <span title="Run" id="runIcon" className="icon-play3"></span>
-            <span title="Run Animation" id="runAnimationIcon" className="icon-film"></span>
-            <span title="Display wireframe" id="wireframeIcon" className="icon-codepen"></span>
-            <span title="Auto Run" id="autoRunIcon" className="icon-spinner9"></span>
-            <span title="Save" id="saveIcon" className="icon-floppy-disk"></span>
-            <span title="Simulate 2D" id="run2DIcon">2D</span>
-            <span title="Simulate 3D" id="run3DIcon">3D</span>
+            <span title="Simulate" id="runAnimationIcon">
+                Simulate
+            </span>
+
+            <span
+                title="Toggle Toolpath"
+                id="run2DIcon"
+                className={activeToggles.toolpath ? 'active' : ''}
+                onClick={() => toggle('toolpath')}
+            >
+                Toolpath
+            </span>
+
+            <span
+                title="Toggle Job Preview"
+                id="run3DIcon"
+                className={activeToggles.jobPreview ? 'active' : ''}
+                onClick={() => toggle('jobPreview')}
+            >
+                Job Preview
+            </span>
+
+            <span title="Save Project" id="saveIcon">
+                Save
+            </span>
         </div>
     );
 };

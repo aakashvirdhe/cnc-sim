@@ -1,10 +1,56 @@
+:root {
+	--bg-primary: #1e1e1e;
+	--bg-secondary: #252526;
+	--bg-tertiary: #333333;
+	--accent-color: #007acc;
+	--accent-hover: #0098ff;
+	--text-primary: #cccccc;
+	--text-secondary: #999999;
+	--border-color: #444444;
+	--success-color: #4caf50;
+	--warning-color: #ff9800;
+	--danger-color: #f44336;
+	--font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+	--shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.2);
+	--shadow-md: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
 #root {
 	display: grid;
 	grid-template-columns: 1fr 400px;
-	/* Canvas/Control column (flex), Editor column (fixed width or flex) */
 	height: 100vh;
 	width: 100vw;
 	overflow: hidden;
+	background-color: var(--bg-primary);
+	color: var(--text-primary);
+	font-family: var(--font-family);
+}
+
+body {
+	margin: 0;
+	padding: 0;
+	background-color: var(--bg-primary);
+	color: var(--text-primary);
+	overflow: hidden;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+	width: 10px;
+	height: 10px;
+}
+
+::-webkit-scrollbar-track {
+	background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+	background: var(--bg-tertiary);
+	border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background: #555;
 }
 
 /* Left Column: Controls & Canvas */
@@ -72,8 +118,13 @@
 }
 
 #bottomMenu span {
-	padding: 0 10px;
+	padding: 0 15px;
 	line-height: 30px;
+	cursor: pointer !important;
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	font-weight: bold;
 }
 
 #editor {
@@ -1462,230 +1513,468 @@ body {
 	list-style: none;
 }
 
-/* Replaced by CSS Grid styles at the top */
+/* Component Styling */
+
+/* TOP BAR */
 #topMenu {
-	/* see top of file */
-}
-
-nav {
-	top: -36px;
-	position: absolute;
-	margin: 20px auto;
+	background-color: var(--bg-secondary);
+	border-bottom: 1px solid var(--border-color);
+	display: flex !important;
+	align-items: center;
+	padding: 0 1rem;
+	box-shadow: var(--shadow-sm);
+	z-index: 20;
+	height: 48px;
+	/* Fixed height */
 	width: 100%;
-	margin-bottom: 0px;
+	box-sizing: border-box;
 }
 
-/* ... preserving nav internals ... */
-nav ul {
-	list-style: none;
-	padding: 0px;
-}
-
-nav>ul {
-	margin-bottom: 0px;
-	width: 100%;
-	background: #272822;
-	position: relative;
-}
-
-nav>ul li {
-	display: table-cell;
-}
-
-nav>ul>li:hover>ul {
-	display: block;
+#topMenu nav {
 	height: 100%;
+	position: static !important;
+	display: flex;
+	align-items: center;
+	margin: 0 !important;
+	width: auto !important;
+	background: transparent !important;
+	flex-grow: 1;
 }
 
-nav>ul>li>ul {
-	display: block;
-	position: absolute;
-	background: #4e4c46;
-	left: 0;
-	right: 0;
-	overflow: hidden;
-	height: 0%;
-	-webkit-transition: all .3s ease;
-	-moz-transition: all .3s ease;
-	-ms-transition: all .3s ease;
-	-o-transition: all .3s ease;
-	transition: all .3s ease;
-	opacity: 0.95;
-}
-
-nav>ul li div {
-	color: #dfdbd2;
-	display: block;
-	line-height: 15px;
-	padding: 15px;
-	position: relative;
-	text-align: center;
-	cursor: pointer;
-	-webkit-transition: all .3s ease;
-	-moz-transition: all .3s ease;
-	-ms-transition: all .3s ease;
-	-o-transition: all .3s ease;
-	transition: all .3s ease;
-}
-
-nav>ul>li>ul>li div:hover {
-	background: #272822;
-}
-
-nav>ul>li>div span {
-	background: #d14826;
-	display: block;
-	height: 100%;
-	width: 100%;
-	left: 0;
-	position: absolute;
-	top: -42px;
-	-webkit-transition: all .3s ease;
-	-moz-transition: all .3s ease;
-	-ms-transition: all .3s ease;
-	-o-transition: all .3s ease;
-	transition: all .3s ease;
-}
-
-nav>ul>li>div>.icon {
-	display: block;
-	line-height: 45px;
-}
-
-a {
-	text-decoration: none;
-}
-
-a:link {
-	color: #dfdbd2;
-}
-
-/* visited link */
-a:visited {
-	color: #dfdbd2;
-}
-
-nav>ul>li>div:hover>span {
-	top: 0;
-}
-
-/* Dialog and other non-layout styles preserved below */
-
-#dialogBox {
-	width: 400px;
-	border: 0px;
-}
-
-#dialogBox ul {
-	padding: 0px;
+#topMenu nav>ul {
+	display: flex;
 	list-style: none;
+	padding: 0;
+	margin: 0;
+	height: 100%;
+	background: transparent !important;
+	width: auto !important;
 }
 
-#dialogBox label {
-	padding: 0px;
-	display: block;
-	margin: 10px 0px 10px 0px;
+#topMenu nav>ul>li {
+	position: relative;
+	height: 100%;
+	display: flex;
+	align-items: center;
 }
 
-#dialog input {
-	display: inline;
-}
-
-.tableList {
-	display: table;
-}
-
-.tableList li {
-	width: 110px;
-	margin: 5px;
-	display: inline-block;
-	vertical-align: top;
-	text-align: center;
+/* Menu Item Trigger */
+#topMenu nav>ul>li>div {
+	padding: 0 1rem;
+	color: var(--text-primary) !important;
+	height: 100%;
+	display: flex;
+	align-items: center;
 	cursor: pointer;
+	transition: all 0.2s ease;
+	font-size: 0.9rem;
+	font-weight: 500;
+	user-select: none;
+	width: auto !important;
+	top: 0 !important;
+	box-sizing: border-box;
+	border-bottom: 3px solid transparent;
+	/* Thick consistent border */
+	margin: 0;
 }
 
-.tableList span {
-	font-size: 50px;
-	display: block;
-	padding-bottom: 10px;
+#topMenu nav>ul>li>div:hover {
+	background-color: var(--bg-tertiary);
+	color: var(--accent-hover) !important;
+	border-bottom: 3px solid var(--accent-color);
+	padding: 0 1rem;
+	/* Enforce padding stay same */
+	margin: 0;
 }
 
-#menuTemplates {
+#topMenu nav>ul>li>div span {
+	position: static !important;
+	background: transparent !important;
+	height: auto !important;
+	width: auto !important;
+	display: inline-block !important;
+}
+
+#topMenu nav>ul>li>div [class^="icon-"] {
+	margin-right: 12px;
+	/* Increased spacing */
+	font-size: 1.1em;
+	color: var(--text-secondary);
+	line-height: normal !important;
+}
+
+#topMenu nav>ul>li:hover>div [class^="icon-"] {
+	color: var(--accent-hover);
+}
+
+/* Dropdown Menu */
+#topMenu nav>ul>li>ul {
+	position: absolute;
+	top: 100%;
+	left: 0;
+	background-color: var(--bg-secondary);
+	border: 1px solid var(--border-color);
+	border-radius: 0 0 4px 4px;
+	box-shadow: var(--shadow-md);
+	min-width: 200px;
 	display: none;
+	flex-direction: column;
+	padding: 4px 0;
+	z-index: 100;
+	height: auto !important;
+	opacity: 1 !important;
+	transition: none !important;
 }
 
-.ui-widget-header {
-	background: #2F3129;
+#topMenu nav>ul>li:hover>ul {
+	display: flex;
 }
 
-.ui-corner-all {
-	border-radius: 0px;
+#topMenu nav>ul>li>ul>li {
+	width: 100%;
+	display: block !important;
 }
 
+#topMenu nav>ul>li>ul>li>div {
+	padding: 10px 16px;
+	color: var(--text-primary) !important;
+	display: flex;
+	align-items: center;
+	cursor: pointer;
+	transition: background-color 0.2s;
+	font-size: 0.9rem;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+#topMenu nav>ul>li>ul>li>div:hover {
+	background-color: var(--accent-color);
+	color: white !important;
+}
+
+/* Machine Icon (Right side of TopBar) */
+#machineIcon {
+	margin-left: auto;
+	color: var(--text-secondary);
+	font-size: 1.5rem;
+	opacity: 0.8;
+	position: relative !important;
+	right: auto !important;
+	top: auto !important;
+	display: block;
+}
+
+/* BOTTOM BAR */
+#bottomMenu {
+	background-color: var(--bg-secondary);
+	border-top: 1px solid var(--border-color);
+	display: flex !important;
+	align-items: center;
+	justify-content: flex-start;
+	padding: 0 1rem;
+	gap: 12px;
+	box-shadow: var(--shadow-sm);
+	z-index: 20;
+	height: 54px !important;
+	box-sizing: border-box;
+}
+
+#bottomMenu span {
+	background-color: var(--bg-tertiary);
+	color: var(--text-primary) !important;
+	padding: 8px 12px;
+	border-radius: 4px;
+	cursor: pointer !important;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	/* Center text/icons */
+	font-size: 0.9rem;
+	font-weight: 500;
+	transition: all 0.2s ease;
+	border: 1px solid var(--border-color);
+	width: 120px !important;
+	/* Fixed Width */
+	height: 36px !important;
+	/* Fixed Height */
+	padding: 0 !important;
+	box-sizing: border-box;
+	display: inline-flex !important;
+	justify-content: center !important;
+	align-items: center !important;
+}
+
+#bottomMenu span.active {
+	background-color: var(--accent-color) !important;
+	color: white !important;
+	border-color: var(--accent-color) !important;
+	box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+#bottomMenu span:hover {
+	background-color: var(--accent-color);
+	color: white !important;
+	border-color: var(--accent-color);
+	transform: translateY(-1px);
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+#bottomMenu span:active {
+	transform: translateY(0);
+	box-shadow: none;
+}
+
+#bottomMenu span [class^="icon-"] {
+	font-size: 1.1em;
+}
+
+/* Save button specific - FIX: Grouped with others */
+#saveIcon {
+	margin-left: 0 !important;
+	background-color: var(--bg-tertiary) !important;
+}
+
+#saveIcon:hover {
+	background-color: var(--success-color) !important;
+	border-color: var(--success-color) !important;
+}
+
+/* Canvas & Layout Fixes */
+#canvasContainer {
+	position: relative;
+	overflow: hidden;
+	width: 100%;
+	height: 100%;
+}
+
+/* Fix dat.GUI displacement - Strict Positioning */
+#gui,
+.dg.ac {
+	position: absolute !important;
+	top: 48px !important;
+	/* Below top bar */
+	right: 0 !important;
+	z-index: 1000 !important;
+	float: none !important;
+	height: auto !important;
+}
+
+/* Ensure Canvas doesn't move */
+#canvasContainer {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 1;
+}
+
+/* Editor Fixes */
+#editor {
+	font-size: 14px;
+	line-height: 1.5;
+}
+
+.ace_gutter-cell {
+	padding-left: 8px !important;
+	padding-right: 8px !important;
+	color: var(--text-secondary) !important;
+}
+
+.ace_gutter {
+	background-color: var(--bg-secondary) !important;
+	border-right: 1px solid var(--border-color) !important;
+}
+
+/* Editor Layout */
+.editor-column {
+	border-left: 1px solid var(--border-color);
+}
+
+/* Messages Overlay */
+#messages {
+	position: absolute;
+	bottom: 20px;
+	left: 20px;
+	background-color: rgba(30, 30, 30, 0.95);
+	color: var(--text-primary) !important;
+	padding: 10px 14px;
+	border-radius: 6px;
+	font-family: monospace;
+	pointer-events: none;
+	z-index: 50;
+	border: 1px solid var(--border-color);
+	box-shadow: var(--shadow-md);
+}
+
+/* Dialog Aesthetics Improvement */
 .ui-dialog {
-	color: #dfdbd2;
-	background: #4e4c46;
-	-webkit-box-shadow: -5px 7px 29px 3px rgba(0, 0, 0, 0.68);
-	-moz-box-shadow: -5px 7px 29px 3px rgba(0, 0, 0, 0.68);
-	box-shadow: -5px 7px 29px 3px rgba(0, 0, 0, 0.68);
+	background-color: var(--bg-secondary) !important;
+	border: 1px solid var(--border-color) !important;
+	color: var(--text-primary) !important;
+	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+	font-family: var(--font-family) !important;
+	border-radius: 8px !important;
+	padding: 0 !important;
 }
 
-.ui-front {
-	font-family: "Times New Roman", Georgia, Serif;
-	font-size: 16;
+.ui-dialog-titlebar {
+	background-color: var(--bg-tertiary) !important;
+	border-bottom: 1px solid var(--border-color) !important;
+	color: var(--text-primary) !important;
+	padding: 12px 16px !important;
+	border-radius: 8px 8px 0 0 !important;
+	display: flex !important;
+	align-items: center;
+	justify-content: space-between;
 }
 
+.ui-dialog-title {
+	float: none !important;
+	font-weight: 600;
+}
+
+.ui-dialog-content {
+	background: var(--bg-secondary) !important;
+	color: var(--text-primary) !important;
+	padding: 20px !important;
+}
+
+.ui-widget-content {
+	background: var(--bg-secondary) !important;
+	color: var(--text-primary) !important;
+}
+
+/* Buttons in Dialog */
 .ui-button {
-	margin-top: 10px;
-	height: 30px;
-	bottom: 0px;
-	width: 100px;
-	background: #d14826;
-	color: #fff;
-	border: 0px;
+	background-color: var(--accent-color) !important;
+	color: white !important;
+	border: none !important;
+	padding: 8px 16px !important;
+	border-radius: 4px !important;
+	transition: background-color 0.2s !important;
+	font-family: var(--font-family) !important;
+	font-weight: 500;
+	cursor: pointer;
+	width: auto !important;
+	/* Allow auto width */
+	margin: 10px 5px 0 0 !important;
+}
+
+.ui-button:hover {
+	background-color: var(--accent-hover) !important;
 }
 
 .ui-dialog-titlebar-close {
-	background: inherit;
+	background: transparent !important;
+	border: none !important;
+	margin: 0 !important;
+	position: static !important;
+	padding: 0 !important;
+	right: auto !important;
+	top: auto !important;
+	width: auto !important;
+	height: auto !important;
+	color: var(--text-secondary);
+	cursor: pointer;
+	display: flex;
+	/* Flex center for the X */
+	align-items: center;
+	justify-content: center;
+}
+
+.ui-dialog-titlebar-close:hover {
+	color: var(--danger-color);
+}
+
+.ui-icon-closethick {
+	display: none;
 }
 
 .ui-dialog-titlebar-close:before {
-	font-size: 15;
-	content: "x";
+	font-size: 1.5rem;
+	line-height: 1;
+	content: "×";
+	display: block;
 }
 
-#machineIcon {
-	color: #dfdbd2;
-	position: absolute;
-	right: 0;
-	top: 0;
-	text-align: right;
-	margin: 5px;
-	font-size: 35px;
+/* Form inputs in dialogs */
+input[type="text"],
+input[type="number"],
+select {
+	background-color: var(--bg-primary);
+	border: 1px solid var(--border-color);
+	color: var(--text-primary);
+	padding: 8px 12px;
+	border-radius: 4px;
+	width: 100%;
+	box-sizing: border-box;
+	margin-bottom: 10px;
 }
 
-#gui {
-	position: absolute;
-	top: 0px;
-	right: 0px;
-	float: right;
-	z-index: 999;
-	-webkit-touch-callout: none;
-	-webkit-user-select: none;
-	-khtml-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
+input[type="radio"] {
+	margin-right: 8px;
 }
 
-.notImplemented {
-	color: #707070;
+input[type="text"]:focus,
+input[type="number"]:focus,
+select:focus {
+	border-color: var(--accent-color);
+	outline: none;
 }
 
-#messages {
-	z-index: 50;
-	color: black;
-	padding: 10;
-	bottom: 0;
-	position: absolute;
+label {
+	color: var(--text-secondary);
+	display: block;
+	margin-bottom: 6px;
+	font-weight: 500;
+	font-size: 0.9rem;
+}
+
+/* New Project / Open Machine List Styles */
+ul {
+	list-style: none;
+	padding: 0;
+}
+
+/* Improve the machine list for Open Machine */
+.tableList {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 15px;
+}
+
+.tableList li {
+	width: auto !important;
+	margin: 0 !important;
+	background-color: var(--bg-tertiary);
+	border: 1px solid var(--border-color);
+	border-radius: 6px;
+	padding: 15px;
+	text-align: center;
+	cursor: pointer;
+	transition: all 0.2s;
+	display: flex !important;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}
+
+.tableList li:hover {
+	border-color: var(--accent-color);
+	background-color: #333344;
+	transform: translateY(-2px);
+}
+
+.tableList span.icon {
+	font-size: 40px !important;
+	color: var(--accent-color);
+	display: block;
+	padding-bottom: 10px;
+	margin-bottom: 5px;
+}
+
+/* Hide 3D Printer icon if it exists somehow */
+.icon-printer {
+	display: none !important;
 }

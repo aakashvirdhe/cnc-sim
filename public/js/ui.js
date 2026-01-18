@@ -6,12 +6,13 @@ CWS.UI = function (controller) {
 	var topMenu = $("#topMenu");
 	$("#topMenu>nav > ul > li").each(function (i) {
 		$(this)
-		.mouseenter(function () { topMenu.css('height', '90px'); })
-		.mouseleave(function () { topMenu.css('height', '45px'); })
+			.mouseenter(function () { topMenu.css('height', '90px'); })
+			.mouseleave(function () { topMenu.css('height', '45px'); })
 	});
 	topMenu.click(
 		function (ev) {
 			var title = ev.target.title
+			console.log("TopMenu Clicked:", title); // Debug log
 			switch (title) {
 				case "New Project":
 					var d = new CWS.DialogBox(title);
@@ -28,6 +29,10 @@ CWS.UI = function (controller) {
 				case "Workpiece dimensions":
 					var d = new CWS.DialogBox(title);
 					d.workpieceDimensions(controller);
+					break;
+				case "Material Settings":
+					var d = new CWS.DialogBox(title);
+					d.materialSettings(controller);
 					break;
 				case "Export File":
 					controller.exportToOBJ();
@@ -95,6 +100,20 @@ CWS.UI = function (controller) {
 	$("#runAnimationIcon").click(function (ev) {
 		controller.runAnimation();
 	});
+
+	// Bridge for React BottomBar
+	window.addEventListener('requestSimulation', function () {
+		// We assume 'Simulate' means run interpreter, as that's the core action
+		controller.runInterpreter(true);
+	});
+
+	window.addEventListener('stopSimulationTrigger', function () {
+		if (controller.stopInterpreter) {
+			controller.stopInterpreter();
+		} else {
+			console.warn("stopInterpreter not implemented");
+		}
+	});
 }
 
 CWS.UI.prototype.constructor = CWS.UI;
@@ -158,7 +177,6 @@ CWS.DialogBox.prototype.newProject = function (controller) {
 		'    <label for= "machineType" >Machine</label>' +
 		'    <input type="radio" name="machineType" value="Lathe" checked> Lathe' +
 		'    <input type="radio" name="machineType" value="Mill"> Mill' +
-		'    <input type="radio" name="machineType" value="3D Printer"> 3D Printer' +
 		'  </li>' +
 		'</ul>' +
 		'</form>';
@@ -222,7 +240,6 @@ CWS.DialogBox.prototype.openMachine = function (controller) {
 	html = '<ul class="tableList">' +
 		'  <li><span class="icon icon-lathe"></span>Lathe</li>' +
 		'  <li><span class="icon icon-mill"></span>Mill</li>' +
-		'  <li><span class="icon icon-printer"></span>3D Printer</li>' +
 		'</ul>';
 	var dialog = this.dialog;
 	html = $(html).click(function (event) {
@@ -285,19 +302,7 @@ CWS.DialogBox.prototype.workpieceDimensions = function (controller) {
 			'  </li>' +
 			'</ul></form>';
 	}
-	else if (machineType == "3D Printer") {
-		html = '<form id="workpieceDimensions">' +
-			'<ul>' +
-			'  <li>' +
-			'    <label for= "filamentDiameter" >Filament Diameter</label>' +
-			'    <input type= "text" name="filamentDiameter" value="' + workpiece.filamentDiameter + '"/>' +
-			'  </li>' +
-			'  <li>' +
-			'    <label for= "layerHeight" >Layer Height</label>' +
-			'    <input type= "text" name= "layerHeight" value="' + workpiece.layerHeight + '"/>' +
-			'  </li>' +
-			'</ul></form>';
-	}
+
 	this.dialog.append($(html));
 	this.dialog.dialog(
 		{
@@ -404,5 +409,60 @@ CWS.DialogBox.prototype.tool = function (controller) {
 					}
 				}
 			});
+	}
+};
+
+CWS.DialogBox.prototype.materialSettings = function (controller) {
+	if (!controller || !controller.material3D) {
+		console.error("Controller or material3D is missing during dialog open!");
+		alert("Error: Material system not ready.");
+		return;
+	}
+
+	try {
+		var mat = controller.material3D;
+		var colorHex = '#' + mat.color.getHexString();
+
+		var content =
+			'<div style="padding: 10px;">' +
+			'<label>Color (Hex): <input type="color" id="matColor" value="' + colorHex + '" style="width:100%; height:40px;"></label>' +
+			'<label>Metalness: <span id="valMetal">' + mat.metalness + '</span><br>' +
+			'<input type="range" id="matMetal" min="0" max="1" step="0.1" value="' + mat.metalness + '" style="width:100%">' +
+			'</label>' +
+			'<label>Roughness: <span id="valRough">' + mat.roughness + '</span><br>' +
+			'<input type="range" id="matRough" min="0" max="1" step="0.1" value="' + mat.roughness + '" style="width:100%">' +
+			'</label>' +
+			'</div>';
+
+		$('#dialogBox').html(content);
+
+		// Live Updates
+		$('#matColor').off('input').on('input', function () {
+			var val = this.value.replace('#', '0x');
+			controller.material3D.color.setHex(val);
+		});
+
+		$('#matMetal').off('input').on('input', function () {
+			var val = parseFloat(this.value);
+			controller.material3D.metalness = val;
+			$('#valMetal').text(val);
+		});
+
+		$('#matRough').off('input').on('input', function () {
+			var val = parseFloat(this.value);
+			controller.material3D.roughness = val;
+			$('#valRough').text(val);
+		});
+
+		$('#dialogBox').dialog({
+			modal: false,
+			title: "Material Configuration",
+			height: "auto",
+			width: 300,
+			position: { my: "right top", at: "right-20 top+60", of: window }
+		});
+	} catch (e) {
+		console.error("Error opening Material Dialog:", e);
+		alert("Error opening dialog: " + e.message);
 	}
 };
