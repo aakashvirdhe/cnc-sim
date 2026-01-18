@@ -8,7 +8,9 @@ export class Motion {
     constructor() {
         // Warning: This assumes the worker file is accessible at this URL.
         // In a Vite app, public/js maps to root, so this should work.
-        this.worker = new Worker("./js/motionWorker.js");
+        this.worker = new Worker(new URL('./motion.worker.ts', import.meta.url), {
+            type: 'module'
+        });
         this.running = false;
         this.data = null;
         this.controller = null;
@@ -56,6 +58,9 @@ export class Motion {
             // Notify UI
             window.dispatchEvent(new CustomEvent('simulationEnded'));
         };
+        this.worker.onerror = (error: ErrorEvent) => {
+            console.error("Worker error:", error);
+        };
     }
 
     stop() {
@@ -63,8 +68,10 @@ export class Motion {
             this.worker.terminate(); // Kill the process
             this.running = false;
 
-            // Re-create worker
-            this.worker = new Worker("./js/motionWorker.js");
+            // Re-create worker using Vite's import syntax
+            this.worker = new Worker(new URL('./motion.worker.ts', import.meta.url), {
+                type: 'module'
+            });
             this.bindWorker(); // Re-attach listener
 
             window.dispatchEvent(new CustomEvent('simulationEnded'));
