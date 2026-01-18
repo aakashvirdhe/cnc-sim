@@ -6,8 +6,8 @@ CWS.UI = function (controller) {
 	var topMenu = $("#topMenu");
 	$("#topMenu>nav > ul > li").each(function (i) {
 		$(this)
-		.mouseenter(function () { topMenu.css('height', '90px'); })
-		.mouseleave(function () { topMenu.css('height', '45px'); })
+			.mouseenter(function () { topMenu.css('height', '90px'); })
+			.mouseleave(function () { topMenu.css('height', '45px'); })
 	});
 	topMenu.click(
 		function (ev) {
@@ -100,6 +100,7 @@ CWS.UI = function (controller) {
 CWS.UI.prototype.constructor = CWS.UI;
 
 CWS.UI.prototype.resize = function () {
+	/*
 	var width = this.elementBody.innerWidth();
 	var height = this.elementBody.innerHeight();
 
@@ -115,6 +116,14 @@ CWS.UI.prototype.resize = function () {
 	this.elementCanvasContainer.innerWidth(canvasWidth);
 	this.controller.renderer.setSize(canvasWidth, height - 75); // adjust height for menus
 	this.elementBottomMenu.innerWidth(canvasWidth);
+	*/
+
+	// Just trigger renderer resize, but let CSS handle container sizes
+	var width = this.elementCanvasContainer.innerWidth();
+	var height = this.elementCanvasContainer.innerHeight();
+	if (this.controller && this.controller.renderer) {
+		this.controller.renderer.setSize(width, height);
+	}
 };
 
 CWS.UI.prototype.createStats = function (v) {
