@@ -16,8 +16,8 @@
 }
 
 #root {
-	display: grid;
-	grid-template-columns: 1fr 400px;
+	/* display: grid;  <-- Disabled, handled in App.tsx for dynamic resizing */
+	/* grid-template-columns: 1fr 400px; */
 	height: 100vh;
 	width: 100vw;
 	overflow: hidden;
@@ -68,6 +68,59 @@ body {
 	height: 100%;
 	border-left: 1px solid #444;
 	position: relative;
+	overflow: hidden;
+	/* Prevent content spill when resizing */
+}
+
+/* Resizer Gutter */
+.resizer-gutter {
+	width: 6px;
+	/* Very small width */
+	background-color: var(--bg-tertiary);
+	cursor: col-resize;
+	position: relative;
+	z-index: 100;
+	transition: background-color 0.2s;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-left: 1px solid var(--border-color);
+}
+
+.resizer-gutter:hover,
+.resizer-gutter.dragging {
+	background-color: var(--accent-color);
+}
+
+/* Collapse Button */
+.collapse-btn {
+	width: 6px;
+	/* Match gutter width */
+	height: 40px;
+	padding: 0;
+	background-color: var(--bg-tertiary);
+	/* Blend with gutter by default */
+	border: none;
+	border-radius: 0;
+	/* Rectangular to match bar */
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--text-secondary);
+	/* Less obstrusive */
+	font-size: 8px;
+	/* Tiny arrow */
+	transition: all 0.2s;
+	z-index: 101;
+	overflow: hidden;
+	/* Hide arrow if too small, or style carefully */
+}
+
+/* Only show accent on hover of the button itself */
+.collapse-btn:hover {
+	background-color: var(--accent-color);
+	color: white;
 }
 
 /* Component Specific Overrides to fit Grid */
