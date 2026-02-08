@@ -1,6 +1,5 @@
 
-// Declare THREE global
-declare const THREE: any;
+import * as THREE from 'three';
 
 export interface RendererOptions {
     width?: number;

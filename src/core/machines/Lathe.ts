@@ -2,7 +2,7 @@
 import { Machine, type MachineOptions } from './Machine';
 import { SHADERS } from '../graphics/Shaders';
 
-declare const THREE: any;
+import * as THREE from 'three';
 
 export class Lathe extends Machine {
     linesVertexPositionBuffer: any;

@@ -8,7 +8,9 @@ import { Lathe } from './machines/Lathe';
 import { Mill } from './machines/Mill';
 // import { Printer } from './machines/Printer';
 
-declare const THREE: any;
+import * as THREE from 'three';
+import { TrackballControls } from '../lib/TrackballControls';
+import { STLBinaryExporter } from '../lib/STLBinaryExporter';
 
 export class Controller {
     storage: StorageService;
@@ -39,7 +41,7 @@ export class Controller {
         this.createDatGUI();
         // Create controls
         // TrackballControls is usually added to THREE by the lib script
-        this.controls = new THREE.TrackballControls(this.renderer.camera, this.renderer.domElement);
+        this.controls = new TrackballControls(this.renderer.camera, this.renderer.domElement);
         this.controls.rotateSpeed = 5.0;
         this.controls.zoomSpeed = 2;
         this.controls.panSpeed = 0.4;
@@ -300,7 +302,7 @@ export class Controller {
         const filename = this.storage.header.name;
         // Problem with STL Exporter
         // @ts-ignore
-        const exporter = new THREE.STLBinaryExporter();
+        const exporter = new STLBinaryExporter();
         const result = exporter.parse(this.renderer.scene);
         const element = document.createElement('a');
         const blob = new Blob([result], { type: 'text/plain' });

@@ -1,7 +1,7 @@
 
 import { SHADERS } from '../graphics/Shaders';
 
-declare const THREE: any;
+import * as THREE from 'three';
 
 export interface MachineOptions {
     renderResolution?: number;
