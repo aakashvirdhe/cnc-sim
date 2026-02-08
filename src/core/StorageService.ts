@@ -1,8 +1,7 @@
 
-import { ProjectFactory, type ProjectData, type ProjectHeader } from './ProjectFactory';
+import { ProjectFactory, type ProjectHeader } from './ProjectFactory';
 
-// Declare LZString globally
-declare const LZString: any;
+import LZString from 'lz-string';
 
 export interface StorageOptions {
     useCompression?: boolean;

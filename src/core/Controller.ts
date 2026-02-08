@@ -1,4 +1,5 @@
 import { ProjectFactory } from './ProjectFactory';
+import * as dat from 'dat.gui';
 import { StorageService } from './StorageService';
 import { EditorService } from './EditorService';
 import { Renderer } from './graphics/Renderer';
@@ -8,8 +9,6 @@ import { Mill } from './machines/Mill';
 // import { Printer } from './machines/Printer';
 
 declare const THREE: any;
-declare const $: any;
-declare const dat: any;
 
 export class Controller {
     storage: StorageService;
@@ -84,7 +83,7 @@ export class Controller {
             controller.save(true);
         }, 60000);
 
-        $(window).bind("beforeunload", function () {
+        window.addEventListener("beforeunload", function () {
             if (controller.saveFlag === 0)
                 return;
             controller.save(true);
@@ -400,13 +399,16 @@ export class Controller {
         if (forceSave === true)
             this.saveFlag = Infinity;
         this.saveFlag++;
+        const saveIcon = document.getElementById("saveIcon");
+        if (!saveIcon) return;
+
         // Don't save
         if (this.saveFlag < changes) {
-            $("#saveIcon").css('color', 'red');
+            saveIcon.style.color = 'red';
         }
         // Save
         else {
-            $("#saveIcon").css('color', 'green');
+            saveIcon.style.color = 'green';
             this.saveFlag = 0;
             this.storage.code = this.editor.getCode();
         }
@@ -485,13 +487,18 @@ export class Controller {
     }
 
     displayMessage(message?: string, error?: boolean) {
-        if (message === undefined)
-            $("#messages").text("");
-        else {
-            if (error === true)
-                $("#messages").css('color', 'red').text(message);
-            else
-                $("#messages").css('color', 'black').text(message);
+        const msgEl = document.getElementById("messages");
+        if (!msgEl) return;
+
+        if (message === undefined) {
+            msgEl.textContent = "";
+        } else {
+            msgEl.textContent = message;
+            if (error === true) {
+                msgEl.style.color = 'red';
+            } else {
+                msgEl.style.color = 'black';
+            }
         }
     }
 }

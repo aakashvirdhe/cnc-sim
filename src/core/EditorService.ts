@@ -1,6 +1,8 @@
 
 // Declare Ace global
-declare const ace: any;
+import ace from 'ace-builds';
+import 'ace-builds/src-noconflict/mode-gcode';
+import 'ace-builds/src-noconflict/theme-monokai';
 
 export class EditorService {
     editor: any;

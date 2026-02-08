@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import './App.css'
 import TopBar from './components/TopBar';
 import BottomBar from './components/BottomBar';
@@ -18,8 +18,7 @@ import { Controller } from './core/Controller';
 // import { Printer } from './core/machines/Printer';
 import { ControllerProvider } from './contexts/ControllerContext';
 
-// Declare Stats global
-declare const Stats: any;
+import Stats from 'stats.js';
 
 function App() {
   const [editorWidth, setEditorWidth] = useState(400);
