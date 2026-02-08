@@ -180,14 +180,13 @@ function App() {
         fontFamily: 'var(--font-family)'
       }}>
         <div className="control-column" style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
-          {showCodeGuide ? (
+          <div style={{ display: showCodeGuide ? 'none' : 'flex', flexDirection: 'column', height: '100%' }}>
+            <TopBar />
+            <CanvasView />
+            <BottomBar />
+          </div>
+          {showCodeGuide && (
             <CodeGuide onBack={() => setShowCodeGuide(false)} currentProjectName={projectName} />
-          ) : (
-            <>
-              <TopBar />
-              <CanvasView />
-              <BottomBar />
-            </>
           )}
         </div>
 

@@ -90,32 +90,35 @@ const CodeGuide: React.FC<CodeGuideProps> = ({ onBack, currentProjectName = "Com
                 <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
                     <button
                         onClick={onBack}
-                        className="ui-button"
                         style={{
-                            backgroundColor: 'var(--bg-tertiary)',
-                            border: '1px solid var(--border-color)',
-                            color: 'var(--text-primary)',
-                            padding: '8px 16px',
-                            borderRadius: '6px',
+                            backgroundColor: 'var(--accent-color)',
+                            border: 'none',
+                            color: '#fff',
+                            padding: '10px 20px',
+                            borderRadius: '8px',
                             display: 'flex',
                             alignItems: 'center',
-                            gap: '8px',
+                            gap: '10px',
                             cursor: 'pointer',
-                            fontSize: '0.95rem',
-                            fontWeight: 600,
-                            transition: 'all 0.2s ease'
+                            fontSize: '1rem',
+                            fontWeight: 700,
+                            transition: 'all 0.2s ease',
+                            boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
                         }}
+                        onMouseOver={(e) => e.currentTarget.style.filter = 'brightness(1.1)'}
+                        onMouseOut={(e) => e.currentTarget.style.filter = 'none'}
                     >
-                        <span className="icon-reply"></span> Back to Simulation
+                        <span className="icon-reply" style={{ fontSize: '1.2rem' }}></span>
+                        Back to Simulation
                     </button>
                     <div style={{
-                        height: '24px',
+                        height: '32px',
                         width: '1px',
                         backgroundColor: 'var(--border-color)'
                     }}></div>
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
-                        <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '1px' }}>Current Workpiece</span>
-                        <span style={{ fontWeight: 700, fontSize: '1.1rem', color: 'var(--text-primary)' }}>{currentProjectName}</span>
+                        <span style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 600 }}>Project</span>
+                        <span style={{ fontWeight: 700, fontSize: '1.2rem', color: 'var(--text-primary)' }}>{currentProjectName}</span>
                     </div>
                 </div>
 
@@ -127,16 +130,17 @@ const CodeGuide: React.FC<CodeGuideProps> = ({ onBack, currentProjectName = "Com
                 }}>
                     <h1 style={{
                         margin: 0,
-                        fontSize: '1.5rem',
-                        fontWeight: 800,
+                        fontSize: '1.6rem',
+                        fontWeight: 900,
                         background: 'linear-gradient(45deg, var(--accent-color), #60a5fa)',
                         WebkitBackgroundClip: 'text',
                         WebkitTextFillColor: 'transparent',
-                        letterSpacing: '-0.5px'
-                    }}>G-Code Guide</h1>
+                        letterSpacing: '-1px',
+                        textTransform: 'uppercase'
+                    }}>G-Code Reference</h1>
                 </div>
 
-                <div style={{ display: 'flex', gap: '8px', backgroundColor: 'var(--bg-tertiary)', padding: '4px', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
+                <div style={{ display: 'flex', gap: '4px', backgroundColor: 'var(--bg-tertiary)', padding: '4px', borderRadius: '10px', border: '1px solid var(--border-color)' }}>
                     <button
                         onClick={() => setMachineType('Lathe')}
                         style={{
@@ -144,9 +148,9 @@ const CodeGuide: React.FC<CodeGuideProps> = ({ onBack, currentProjectName = "Com
                             color: machineType === 'Lathe' ? '#fff' : 'var(--text-primary)',
                             border: 'none',
                             borderRadius: '6px',
-                            padding: '6px 16px',
+                            padding: '8px 20px',
                             cursor: 'pointer',
-                            fontWeight: 600,
+                            fontWeight: 700,
                             fontSize: '0.9rem',
                             transition: 'all 0.2s ease'
                         }}
@@ -160,9 +164,9 @@ const CodeGuide: React.FC<CodeGuideProps> = ({ onBack, currentProjectName = "Com
                             color: machineType === 'Mill' ? '#fff' : 'var(--text-primary)',
                             border: 'none',
                             borderRadius: '6px',
-                            padding: '6px 16px',
+                            padding: '8px 20px',
                             cursor: 'pointer',
-                            fontWeight: 600,
+                            fontWeight: 700,
                             fontSize: '0.9rem',
                             transition: 'all 0.2s ease'
                         }}
