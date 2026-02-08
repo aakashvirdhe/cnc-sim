@@ -59,11 +59,13 @@ function App() {
 
       // Initialize Stats
       const stats = new Stats();
-      stats.domElement.style.position = 'absolute';
-      stats.domElement.style.bottom = '0px';
-      stats.domElement.style.right = '0px';
+      stats.dom.style.position = 'absolute';
+      stats.dom.style.bottom = '0px';
+      stats.dom.style.right = '0px';
+      stats.dom.style.top = 'auto'; // Override default
+      stats.dom.style.left = 'auto'; // Override default
       const container = document.getElementById("canvasContainer");
-      if (container) container.appendChild(stats.domElement);
+      if (container) container.appendChild(stats.dom);
 
       function onWindowResize() {
         newController.windowResize();

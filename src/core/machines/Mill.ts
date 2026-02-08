@@ -13,8 +13,8 @@ export class Mill extends Machine {
     shaderProgram1: any;
     shaderProgram2: any;
     renderDimensions: any;
-    pixels1: Uint8Array;
-    pixels2: Uint8Array;
+    pixels1!: Uint8Array;
+    pixels2!: Uint8Array;
     linesVertexPositionBuffer: any;
     texcoordBuffer: any;
 
@@ -283,10 +283,10 @@ export class Mill extends Machine {
         this.gl.readPixels(0, 0, this.renderResolution, this.renderResolution, this.gl.RGBA, this.gl.UNSIGNED_BYTE, pixels);
     }
 
-    calculatePositionAndTexture(dimensions: any, toolRadius: number) {
+    calculatePositionAndTexture(_dimensions: any, toolRadius: number) {
         const xDist = (this.renderDimensions.x + 1) / 65535.0;
         const yDist = (this.renderDimensions.y + 1) / 65535.0;
-        const zDist = (this.renderDimensions.z + 1) / 65535.0;
+        // const zDist = (this.renderDimensions.z + 1) / 65535.0;
         const dataview1 = new DataView(this.pixels1.buffer, 0);
         const dataview2 = new DataView(this.pixels2.buffer, 0);
         let positions: number[] | Float32Array = [];
@@ -383,10 +383,10 @@ export class Mill extends Machine {
         const geometry = this.mesh3D.geometry;
         // const positionsMesh = geometry.attributes.position.array; // reusing var name
 
-        const xDist = this.renderDimensions.x / 65535.0;
-        const yDist = this.renderDimensions.y / 65535.0;
+        // const xDist = this.renderDimensions.x / 65535.0;
+        // const yDist = this.renderDimensions.y / 65535.0;
         const zDist = this.renderDimensions.z / 65535.0;
-        const dataview1 = new DataView(this.pixels1.buffer, 0);
+        // const dataview1 = new DataView(this.pixels1.buffer, 0);
         const dataview2 = new DataView(this.pixels2.buffer, 0);
 
         const minX = Math.round(this.tool.radius * this.renderResolution / this.renderDimensions.x);

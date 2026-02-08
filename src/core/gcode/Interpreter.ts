@@ -133,8 +133,8 @@ export class Interpreter {
         this.toolTable[tnumber] = { x: 0, y: 0, z: 0, i: 0, j: 0, q: 0, r: 0 };
     }
 
-    g9999(cmd: Command) { }
-    m9999(cmd: Command) { }
+    g9999(_cmd: Command) { }
+    m9999(_cmd: Command) { }
 
     coordinatesToAbsolute(cmd: Command) {
         if (this.settings.machine_postion_g53 == true) {
@@ -438,7 +438,7 @@ export class Interpreter {
         this.position.z = cmd.param.xyz.z;
     }
 
-    g4(cmd: Command) { }
+    g4(_cmd: Command) { }
 
     g10(cmd: Command) {
         let l = Math.round(cmd.param['l']);
@@ -490,68 +490,68 @@ export class Interpreter {
         this.axisIJK_linear = 'i';
     }
 
-    g20(cmd: Command) {
+    g20(_cmd: Command) {
         this.modal.units = 25.4;
     }
 
-    g21(cmd: Command) {
+    g21(_cmd: Command) {
         this.modal.units = 1.0;
     }
 
-    g28(cmd: Command) { }
-    g30(cmd: Command) { }
+    g28(_cmd: Command) { }
+    g30(_cmd: Command) { }
 
-    g40(cmd: Command) {
+    g40(_cmd: Command) {
         this.modal.cutter_comp = 40;
     }
-    g41(cmd: Command) {
+    g41(_cmd: Command) {
         this.modal.cutter_comp = 41;
     }
-    g42(cmd: Command) {
+    g42(_cmd: Command) {
         this.modal.cutter_comp = 42;
     }
-    g43(cmd: Command) { }
-    g49(cmd: Command) { }
-    g53(cmd: Command) { }
+    g43(_cmd: Command) { }
+    g49(_cmd: Command) { }
+    g53(_cmd: Command) { }
 
-    g54(cmd: Command) {
+    g54(_cmd: Command) {
         if (this.modal.cutter_comp != 40)
             throw new ErrorParser(this.settings.line_number, "Wrong G54. Cutter compensation is on", "");
         this.settings.coord_system = this.coordinateSystemTable[1];
     }
-    g55(cmd: Command) {
+    g55(_cmd: Command) {
         if (this.modal.cutter_comp != 40)
             throw new ErrorParser(this.settings.line_number, "Wrong G55. Cutter compensation is on", "");
         this.settings.coord_system = this.coordinateSystemTable[2];
     }
-    g56(cmd: Command) {
+    g56(_cmd: Command) {
         if (this.modal.cutter_comp != 40)
             throw new ErrorParser(this.settings.line_number, "Wrong G56. Cutter compensation is on", "");
         this.settings.coord_system = this.coordinateSystemTable[3];
     }
-    g57(cmd: Command) {
+    g57(_cmd: Command) {
         if (this.modal.cutter_comp != 40)
             throw new ErrorParser(this.settings.line_number, "Wrong G57. Cutter compensation is on", "");
         this.settings.coord_system = this.coordinateSystemTable[4];
     }
-    g58(cmd: Command) {
+    g58(_cmd: Command) {
         if (this.modal.cutter_comp != 40)
             throw new ErrorParser(this.settings.line_number, "Wrong G58. Cutter compensation is on", "");
         this.settings.coord_system = this.coordinateSystemTable[5];
     }
-    g59(cmd: Command) {
+    g59(_cmd: Command) {
         if (this.modal.cutter_comp != 40)
             throw new ErrorParser(this.settings.line_number, "Wrong G59. Cutter compensation is on", "");
         this.settings.coord_system = this.coordinateSystemTable[6];
     }
 
-    g61(cmd: Command) { }
-    g64(cmd: Command) { }
+    g61(_cmd: Command) { }
+    g64(_cmd: Command) { }
 
-    g90(cmd: Command) {
+    g90(_cmd: Command) {
         this.modal.distance = 90;
     }
-    g91(cmd: Command) {
+    g91(_cmd: Command) {
         this.modal.distance = 91;
     }
 
@@ -561,37 +561,37 @@ export class Interpreter {
             this.settings.coord_offset[k] = cmd.param.xyz[k] * this.modal.units;
     }
 
-    g93(cmd: Command) {
+    g93(_cmd: Command) {
         this.modal.feed_rate_mode = 93;
     }
-    g94(cmd: Command) {
+    g94(_cmd: Command) {
         this.modal.feed_rate_mode = 94;
         this.settings.feed_rate = null;
     }
 
-    g98(cmd: Command) { }
-    g99(cmd: Command) { }
+    g98(_cmd: Command) { }
+    g99(_cmd: Command) { }
 
-    m0(cmd: Command) { }
-    m1(cmd: Command) { }
-    m2(cmd: Command) { }
-    m3(cmd: Command) { }
-    m4(cmd: Command) { }
-    m5(cmd: Command) { }
-    m6(cmd: Command) { }
-    m7(cmd: Command) { }
-    m8(cmd: Command) { }
-    m9(cmd: Command) { }
+    m0(_cmd: Command) { }
+    m1(_cmd: Command) { }
+    m2(_cmd: Command) { }
+    m3(_cmd: Command) { }
+    m4(_cmd: Command) { }
+    m5(_cmd: Command) { }
+    m6(_cmd: Command) { }
+    m7(_cmd: Command) { }
+    m8(_cmd: Command) { }
+    m9(_cmd: Command) { }
 
-    m30(cmd: Command) {
+    m30(_cmd: Command) {
         this.stopRunning = true;
     }
 
-    m48(cmd: Command) { }
-    m49(cmd: Command) { }
-    m60(cmd: Command) { }
-    m82(cmd: Command) { }
-    m83(cmd: Command) { }
-    m104(cmd: Command) { }
-    m109(cmd: Command) { }
+    m48(_cmd: Command) { }
+    m49(_cmd: Command) { }
+    m60(_cmd: Command) { }
+    m82(_cmd: Command) { }
+    m83(_cmd: Command) { }
+    m104(_cmd: Command) { }
+    m109(_cmd: Command) { }
 }

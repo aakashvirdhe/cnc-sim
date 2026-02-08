@@ -20,14 +20,6 @@ const BottomBar: React.FC = () => {
         }
     }, [controller]);
 
-    const handleSimulate = () => {
-        if (controller) {
-            // Force true for explicit user action
-            controller.runInterpreter(true);
-        } else {
-            console.error("Controller not initialized");
-        }
-    };
 
     const toggleToolpath = () => {
         if (controller) {

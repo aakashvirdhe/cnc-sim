@@ -12,8 +12,8 @@ export class Lathe extends Machine {
     mtype: string;
     tool: any;
     shaderProgram1: any;
-    pixels: Uint8Array;
-    dataLevel1: Float32Array;
+    pixels!: Uint8Array;
+    dataLevel1!: Float32Array;
     dataLevel2: Float32Array | undefined;
     cosTable: Float32Array | undefined;
     sinTable: Float32Array | undefined;
@@ -115,7 +115,7 @@ export class Lathe extends Machine {
     initGeometry3D() {
         this.material3D.shading = THREE.SmoothShading;
         const segments = this.segments;
-        const phiStart = 0;
+        // const phiStart = 0;
         const phiLength = 2 * Math.PI;
         const SlicesX = this.renderResolution + 2;
 
@@ -139,13 +139,13 @@ export class Lathe extends Machine {
 
         // Create the index vector
         let ii = 0;
-        let ifa = 0;
+        // let ifa = 0;
         for (let ix = 0; ix < SlicesX - 1; ix++) {
             let ir;
             for (ir = 0; ir < segments - 2; ir++) {
                 const i = ix * segments + ir;
 
-                const iv = ii;
+                // const iv = ii;
                 index[ii++] = i + 1 + segments;
                 index[ii++] = i + 1;
                 index[ii++] = i;
@@ -195,7 +195,7 @@ export class Lathe extends Machine {
         // Generate the UVs
         let iv = 0;
         for (let ix = 0; ix < SlicesX; ix++) {
-            const r = this.dataLevel1[Math.min(ix, this.dataLevel1.length - 1)]; // Safety clamp
+            // const r = this.dataLevel1[Math.min(ix, this.dataLevel1.length - 1)]; // Safety clamp
             for (let ir = 0; ir < segments; ir++) {
                 uvs[iv++] = ix * 1 / SlicesX;
                 uvs[iv++] = sinTable[ir] * 0.5 + 0.5;
