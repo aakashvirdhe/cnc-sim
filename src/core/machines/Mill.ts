@@ -337,6 +337,8 @@ export class Mill extends Machine {
 
         const dimensions = this.workpiece;
 
+        if (!this.motionData) return;
+
         this.gl.useProgram(this.shaderProgram1);
         this.gl.bindTexture(this.gl.TEXTURE_2D, null);
         this.linesVertexPositionBuffer = this.createBuffer(this.linesVertexPositionBuffer, this.motionData.positions, 3,

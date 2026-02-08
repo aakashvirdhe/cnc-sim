@@ -204,21 +204,29 @@ export class Controller {
         }
         else if (this.storage.machineType == "Mill") {
             if (icon) icon.className = "icon-mill";
-            this.machine = new Mill({
-                machine: this.storage.machine,
-                material3D: this.material3D,
-                workpiece: this.storage.workpiece,
-                renderResolution: 1024
-            });
-            if (this.machine.mtype == "Mill") {
-                this.updateWorkpieceDraw();
-                // Ensure arguments are valid numbers to prevent crashes
-                const x = parseFloat(String(this.storage.workpiece.x)) || 0;
-                const y = parseFloat(String(this.storage.workpiece.y)) || 0;
-                this.renderer.lookAtMill({ x, y });
-                this.renderer.addMesh("2DWorkpiece", this.machine.mesh2D);
-                this.renderer.addMesh("3DWorkpiece", this.machine.mesh3D);
-                // this.updateWireframe();
+            try {
+                this.machine = new Mill({
+                    machine: this.storage.machine,
+                    material3D: this.material3D,
+                    workpiece: this.storage.workpiece,
+                    renderResolution: 1024
+                });
+                if (this.machine.mtype == "Mill") {
+                    this.updateWorkpieceDraw();
+                    // Ensure arguments are valid numbers to prevent crashes
+                    const x = parseFloat(String(this.storage.workpiece.x)) || 0;
+                    const y = parseFloat(String(this.storage.workpiece.y)) || 0;
+                    this.renderer.lookAtMill({ x, y });
+                    this.renderer.addMesh("2DWorkpiece", this.machine.mesh2D);
+                    this.renderer.addMesh("3DWorkpiece", this.machine.mesh3D);
+                    // this.updateWireframe();
+                }
+            } catch (e) {
+                console.error("Failed to load Mill machine:", e);
+                // Fallback or alert user?
+                // For now, let's just log it so we can see it in console (or communicate it via notify_user later if we could read logs)
+                // Since I cannot read browser console, I might need to display it in the UI messages.
+                this.displayMessage("Error loading Mill: " + e, true);
             }
         }
     }

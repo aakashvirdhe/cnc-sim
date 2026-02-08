@@ -53,9 +53,9 @@ const BottomBar: React.FC = () => {
 
     return (
         <div id="bottomMenu">
-            <span title="Run G-Code" id="runAnimationIcon" onClick={handleSimulate}>
+            {/* <span title="Run G-Code" id="runAnimationIcon" onClick={handleSimulate}>
                 Simulate
-            </span>
+            </span> */}
 
             <span title="Play Animation" onClick={() => controller?.runAnimation(undefined)}>
                 Animate

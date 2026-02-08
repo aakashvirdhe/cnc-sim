@@ -115,6 +115,8 @@ export abstract class Machine {
         if (this.meshes.mesh2D === true)
             return;
 
+        if (!this.motionData) return;
+
         const geometry = this.mesh2D.geometry;
         // Updating the positions and vcolor by the 'correct' way won't
         // work here because the buffer size keeps changing all the time
