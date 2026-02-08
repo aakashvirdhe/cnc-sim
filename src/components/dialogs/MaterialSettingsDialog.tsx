@@ -11,11 +11,13 @@ const MaterialSettingsDialog: React.FC<MaterialSettingsDialogProps> = ({ onClose
     const [color, setColor] = useState('#aaaaaa');
     const [metalness, setMetalness] = useState(0.7);
     const [roughness, setRoughness] = useState(0.3);
+    const [emissive, setEmissive] = useState('#000000');
 
     useEffect(() => {
         if (controller && controller.material3D) {
             const mat = controller.material3D;
             setColor('#' + mat.color.getHexString());
+            setEmissive('#' + mat.emissive.getHexString());
             setMetalness(mat.metalness);
             setRoughness(mat.roughness);
         }
@@ -26,6 +28,14 @@ const MaterialSettingsDialog: React.FC<MaterialSettingsDialogProps> = ({ onClose
         setColor(val);
         if (controller && controller.material3D) {
             controller.material3D.color.setHex(val.replace('#', '0x'));
+        }
+    };
+
+    const handleEmissiveChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const val = e.target.value;
+        setEmissive(val);
+        if (controller && controller.material3D) {
+            controller.material3D.emissive.setHex(val.replace('#', '0x'));
         }
     };
 
@@ -51,6 +61,10 @@ const MaterialSettingsDialog: React.FC<MaterialSettingsDialogProps> = ({ onClose
                 <label style={{ display: 'block', marginBottom: '10px' }}>
                     Color (Hex):
                     <input type="color" value={color} onChange={handleColorChange} style={{ width: '100%', height: '40px', marginTop: '5px' }} />
+                </label>
+                <label style={{ display: 'block', marginBottom: '10px' }}>
+                    Emissiveness (Hex):
+                    <input type="color" value={emissive} onChange={handleEmissiveChange} style={{ width: '100%', height: '40px', marginTop: '5px' }} />
                 </label>
                 <label style={{ display: 'block', marginBottom: '10px' }}>
                     Metalness: <span id="valMetal">{metalness}</span><br />

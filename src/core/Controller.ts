@@ -348,8 +348,12 @@ export class Controller {
         const gui = new dat.GUI({ autoPlace: false });
         gui.domElement.id = 'gui';
         gui.close();
-        const container = document.getElementById("canvasContainer");
-        if (container) container.appendChild(gui.domElement);
+
+        // Only show controls if enabled in environment
+        if (import.meta.env.VITE_SHOW_CONTROLS === 'true') {
+            const container = document.getElementById("canvasContainer");
+            if (container) container.appendChild(gui.domElement);
+        }
 
         const data =
         {
