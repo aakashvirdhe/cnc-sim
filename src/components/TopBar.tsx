@@ -93,6 +93,9 @@ const TopBar: React.FC = () => {
                             </li>
                         </ul>
                     </li>
+                    <li onClick={() => window.dispatchEvent(new CustomEvent('toggleCodeGuide', { detail: true }))}>
+                        <div title="G Code Guide"><span className="icon icon-info-sign"></span>Guide</div>
+                    </li>
                 </ul>
             </nav>
 

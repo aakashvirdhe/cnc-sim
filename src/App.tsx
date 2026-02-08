@@ -20,11 +20,34 @@ import { ControllerProvider } from './contexts/ControllerContext';
 
 import Stats from 'stats.js';
 
+import CodeGuide from './components/CodeGuide';
+
 function App() {
   const [editorWidth, setEditorWidth] = useState(400);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [controller, setController] = useState<Controller | null>(null);
+  const [showCodeGuide, setShowCodeGuide] = useState(false);
+  const [projectName, setProjectName] = useState("Untitled");
+
+  useEffect(() => {
+    const handleCodeGuideToggle = (e: CustomEvent) => {
+      setShowCodeGuide(e.detail);
+    };
+    // Also listen for project updates to show correct name in guide
+    const handleProjectUpdate = (e: CustomEvent) => {
+      if (e.detail && e.detail.projectName) {
+        setProjectName(e.detail.projectName);
+      }
+    };
+
+    window.addEventListener('toggleCodeGuide', handleCodeGuideToggle as EventListener);
+    window.addEventListener('projectUpdated', handleProjectUpdate as EventListener);
+    return () => {
+      window.removeEventListener('toggleCodeGuide', handleCodeGuideToggle as EventListener);
+      window.removeEventListener('projectUpdated', handleProjectUpdate as EventListener);
+    };
+  }, []);
 
   // Initialize controller and UI (existing logic)
   useEffect(() => {
@@ -57,6 +80,11 @@ function App() {
       (window as any).controller = newController;
       setController(newController);
 
+      // Update local state with initial project name
+      if (newController.storage && newController.storage.header) {
+        setProjectName(newController.storage.header.name || "Untitled");
+      }
+
       // Initialize Stats
       const stats = new Stats();
       stats.dom.style.position = 'absolute';
@@ -64,6 +92,11 @@ function App() {
       stats.dom.style.right = '0px';
       stats.dom.style.top = 'auto'; // Override default
       stats.dom.style.left = 'auto'; // Override default
+
+      // Wait for DOM to be ready if showing code guide immediately (unlikely but safe)
+      // stats appending moved to inside render or effect when container exists
+
+      // We only append stats if canvas container exists
       const container = document.getElementById("canvasContainer");
       if (container) container.appendChild(stats.dom);
 
@@ -74,8 +107,8 @@ function App() {
       function animate() {
         requestAnimationFrame(animate);
         stats.update();
-        newController.motion.run();
-        newController.render();
+        if (newController && newController.motion) newController.motion.run();
+        if (newController) newController.render();
       }
       animate();
 
@@ -90,7 +123,7 @@ function App() {
       controller.windowResize();
       if ((window as any).ui) (window as any).ui.resize();
     }
-  }, [editorWidth, isCollapsed, controller]);
+  }, [editorWidth, isCollapsed, controller, showCodeGuide]); // Added showCodeGuide dependency to trigger resize when switching back
 
   const startResizing = useCallback(() => {
     setIsDragging(true);
@@ -146,10 +179,16 @@ function App() {
         color: 'var(--text-primary)',
         fontFamily: 'var(--font-family)'
       }}>
-        <div className="control-column">
-          <TopBar />
-          <CanvasView />
-          <BottomBar />
+        <div className="control-column" style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
+          {showCodeGuide ? (
+            <CodeGuide onBack={() => setShowCodeGuide(false)} currentProjectName={projectName} />
+          ) : (
+            <>
+              <TopBar />
+              <CanvasView />
+              <BottomBar />
+            </>
+          )}
         </div>
 
         <div
