@@ -30,19 +30,45 @@ const NewProjectDialog: React.FC<NewProjectDialogProps> = ({ onClose }) => {
                     </button>
                 </>
             }>
-            <form id="menuNewProject">
-                <ul>
-                    <li>
-                        <label htmlFor="projectName">Project Name</label>
-                        <input type="text" name="projectName" value={projectName} onChange={(e) => setProjectName(e.target.value)} />
-                    </li>
-                    <li>
-                        <label htmlFor="machineType">Machine</label>
-                        <input type="radio" name="machineType" value="Lathe" checked={machineType === 'Lathe'} onChange={() => setMachineType('Lathe')} /> Lathe
-                        <input type="radio" name="machineType" value="Mill" checked={machineType === 'Mill'} onChange={() => setMachineType('Mill')} /> Mill
-                    </li>
-                </ul>
-            </form>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', padding: '10px' }}>
+                <div>
+                    <label htmlFor="projectName" style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Project Name</label>
+                    <input
+                        type="text"
+                        id="projectName"
+                        name="projectName"
+                        value={projectName}
+                        onChange={(e) => setProjectName(e.target.value)}
+                        className="text ui-widget-content ui-corner-all"
+                        style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
+                    />
+                </div>
+                <div>
+                    <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>Machine Type</label>
+                    <div style={{ display: 'flex', gap: '20px' }}>
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                            <input
+                                type="radio"
+                                name="machineType"
+                                value="Lathe"
+                                checked={machineType === 'Lathe'}
+                                onChange={() => setMachineType('Lathe')}
+                            />
+                            <span>Lathe</span>
+                        </label>
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                            <input
+                                type="radio"
+                                name="machineType"
+                                value="Mill"
+                                checked={machineType === 'Mill'}
+                                onChange={() => setMachineType('Mill')}
+                            />
+                            <span>Mill</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
         </DialogBase>
     );
 };
