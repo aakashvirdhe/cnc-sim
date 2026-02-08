@@ -286,6 +286,9 @@ export class Controller {
             const x = parseFloat(String(this.storage.workpiece.x)) || 0;
             const y = parseFloat(String(this.storage.workpiece.y)) || 0;
             this.renderer.lookAtMill({ x, y });
+            // Re-add meshes because updateWorkpieceDimensions (via initGeometry3D) created new objects
+            this.renderer.addMesh("2DWorkpiece", this.machine.mesh2D);
+            this.renderer.addMesh("3DWorkpiece", this.machine.mesh3D);
         }
         // else if (this.machine.mtype == "3D Printer") {
         //     this.runInterpreter();

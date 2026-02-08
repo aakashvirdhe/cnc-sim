@@ -204,6 +204,8 @@ export class Mill extends Machine {
     }
 
     updateWorkpieceDimensions() {
+        this.initGeometry3D();
+        this.setRendererResolution(this.renderResolution);
         this.meshes.mesh3D = false;
         this.meshes.meshWorkpiece = false;
         this.create3DWorkpiece();
