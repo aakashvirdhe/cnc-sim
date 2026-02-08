@@ -1,4 +1,3 @@
-
 import { ProjectFactory } from './ProjectFactory';
 import { StorageService } from './StorageService';
 import { EditorService } from './EditorService';
@@ -6,16 +5,11 @@ import { Renderer } from './graphics/Renderer';
 import { Motion } from './Motion';
 import { Lathe } from './machines/Lathe';
 import { Mill } from './machines/Mill';
-import { Printer } from './machines/Printer';
+// import { Printer } from './machines/Printer';
 
 declare const THREE: any;
 declare const $: any;
 declare const dat: any;
-
-interface MachineTool {
-    radius: number;
-    angle: number;
-}
 
 export class Controller {
     storage: StorageService;
@@ -23,25 +17,25 @@ export class Controller {
     renderer: Renderer;
     motion: Motion;
     saveFlag: number;
-    autoRun: boolean;
+    // autoRun: boolean; // Removed
     _run3D: boolean;
     _run2D: boolean;
-    _runWireframe: boolean;
+    // _runWireframe: boolean; // Removed
     controls: any;
     machine: any; // Type as Machine (Lathe | Mill)
     material3D: any;
 
-    constructor(editor: EditorService, storage: StorageService, renderer: Renderer, motion: Motion, autoRun: boolean) {
+    constructor(editor: EditorService, storage: StorageService, renderer: Renderer, motion: Motion) {
         this.storage = storage;
         this.editor = editor;
         this.renderer = renderer;
         this.motion = motion;
         this.motion.setController(this);
         this.saveFlag = 0;
-        this.autoRun = false;
+        // this.autoRun = false;
         this._run3D = true;
         this._run2D = true;
-        this._runWireframe = true;
+        // this._runWireframe = true;
 
         this.createDatGUI();
         // Create controls
@@ -67,10 +61,10 @@ export class Controller {
         // Init the editor
         // eslint-disable-next-line @typescript-eslint/no-this-alias
         const controller = this;
-        this.editor.subscribeToCodeChanged(function (code: string, ev: any) {
+        this.editor.subscribeToCodeChanged(function (_code: string, _ev: any) {
             controller.save();
         });
-        this.editor.subscribeToCodeChanged(function (code: string, ev: any) {
+        this.editor.subscribeToCodeChanged(function (_code: string, _ev: any) {
             controller.runInterpreter();
         });
 
@@ -96,7 +90,7 @@ export class Controller {
             controller.save(true);
         });
 
-        this.autoRun = autoRun;
+        // this.autoRun = autoRun; 
     }
 
     get run2D() {
@@ -113,18 +107,18 @@ export class Controller {
         this._run3D = val;
         this.update3D();
     }
-    get runWireframe() {
-        return this._runWireframe;
-    }
-    set runWireframe(val) {
-        this._runWireframe = val;
-        if (this._runWireframe === true) {
-            if (this.machine && this.machine.meshWorkpiece) this.machine.meshWorkpiece.visible = true;
-        }
-        else {
-            if (this.machine && this.machine.meshWorkpiece) this.machine.meshWorkpiece.visible = false;
-        }
-    }
+    // get runWireframe() {
+    //     return this._runWireframe;
+    // }
+    // set runWireframe(val) {
+    //     this._runWireframe = val;
+    //     if (this._runWireframe === true) {
+    //         if (this.machine && this.machine.meshWorkpiece) this.machine.meshWorkpiece.visible = true;
+    //     }
+    //     else {
+    //         if (this.machine && this.machine.meshWorkpiece) this.machine.meshWorkpiece.visible = false;
+    //     }
+    // }
 
     createProject(data: any, saveCurrent?: boolean) {
         if (data['projectName'] == "" || data['projectName'] === undefined)
@@ -216,28 +210,16 @@ export class Controller {
                 workpiece: this.storage.workpiece,
                 renderResolution: 1024
             });
-            this.renderer.lookAtMill({
-                x: this.storage.workpiece.x,
-                y: this.storage.workpiece.y, z: this.storage.workpiece.z
-            });
-            this.renderer.addMesh("2DWorkpiece", this.machine.mesh2D);
-            this.renderer.addMesh("3DWorkpiece", this.machine.mesh3D);
-            this.updateWireframe();
-        }
-        else if (this.storage.machineType == "3D Printer") {
-            if (icon) icon.className = "icon-printer";
-            this.machine = new Printer({
-                machine: this.storage.machine,
-                material3D: this.material3D,
-                workpiece: this.storage.workpiece
-            });
-            this.renderer.lookAt3DPrinter({
-                x: this.storage.machine.dimension.x,
-                y: this.storage.machine.dimension.y, z: this.storage.machine.dimension.z
-            });
-            this.renderer.addMesh("2DWorkpiece", this.machine.mesh2D);
-            this.renderer.addMesh("3DWorkpiece", this.machine.mesh3D);
-            this.updateWireframe();
+            if (this.machine.mtype == "Mill") {
+                this.updateWorkpieceDraw();
+                // Ensure arguments are valid numbers to prevent crashes
+                const x = parseFloat(String(this.storage.workpiece.x)) || 0;
+                const y = parseFloat(String(this.storage.workpiece.y)) || 0;
+                this.renderer.lookAtMill({ x, y });
+                this.renderer.addMesh("2DWorkpiece", this.machine.mesh2D);
+                this.renderer.addMesh("3DWorkpiece", this.machine.mesh3D);
+                // this.updateWireframe();
+            }
         }
     }
 
@@ -246,6 +228,14 @@ export class Controller {
         this.storage.workpiece = ProjectFactory.createDefaultWorkpiece(machine);
         this.loadMachine();
         this.runInterpreter();
+
+        // Dispatch event for React UI to update
+        window.dispatchEvent(new CustomEvent('projectUpdated', {
+            detail: {
+                projectName: this.storage.header.name,
+                machineType: this.storage.machineType
+            }
+        }));
     }
 
     workpieceDimensions(dimensions: any) {
@@ -261,8 +251,8 @@ export class Controller {
     }
 
     setMachineTool(tool: any) {
-        this.storage.machine.tool.radius = parseFloat(tool['toolradius']);
-        this.storage.machine.tool.angle = parseFloat(tool['toolangle']);
+        this.storage.machine.tool.radius = parseFloat(tool['toolradius']) || 0;
+        this.storage.machine.tool.angle = parseFloat(tool['toolangle']) || 0;
         this.machine.updateTool();
         this.updateWorkpieceDraw();
     }
@@ -282,17 +272,17 @@ export class Controller {
             this.updateWorkpieceDraw();
             this.renderer.lookAtLathe({ x: this.storage.workpiece.x, y: this.storage.workpiece.z });
         }
-        else if (this.machine.mtype == "Mill") {
+        if (this.machine.mtype == "Mill") {
             this.updateWorkpieceDraw();
-            this.renderer.lookAtMill({
-                x: this.storage.workpiece.x,
-                y: this.storage.workpiece.y, z: this.storage.workpiece.z
-            });
+            // Ensure arguments are valid numbers to prevent crashes
+            const x = parseFloat(String(this.storage.workpiece.x)) || 0;
+            const y = parseFloat(String(this.storage.workpiece.y)) || 0;
+            this.renderer.lookAtMill({ x, y });
         }
-        else if (this.machine.mtype == "3D Printer") {
-            this.runInterpreter();
-        }
-        this.updateWireframe();
+        // else if (this.machine.mtype == "3D Printer") {
+        //     this.runInterpreter();
+        // }
+        // this.updateWireframe();
     }
 
     exportToOBJ() {
@@ -369,11 +359,11 @@ export class Controller {
     }
 
     runGCode() {
-        this.editor.codeChanged();
+        this.editor.codeChanged("");
     }
 
     setEditor() {
-        this.editor.codeChanged();
+        this.editor.codeChanged("");
     }
 
     windowResize() {
@@ -384,7 +374,7 @@ export class Controller {
         }
     }
 
-    render(forceUpdate?: boolean) {
+    render(_forceUpdate?: boolean) {
         this.controls.update();
         // if (this.controls.controlUpdated || forceUpdate)
         // {   
@@ -411,9 +401,9 @@ export class Controller {
         }
     }
 
-    runInterpreter(forceRun?: boolean) {
-        if (this.autoRun === false && forceRun !== true)
-            return;
+    runInterpreter(_forceRun?: boolean) {
+        // if (this.autoRun === false && forceRun !== true)
+        //    return;
         const code = this.editor.getCode();
         this.motion.setData({
             header: this.storage.header,
@@ -435,14 +425,14 @@ export class Controller {
         if (!this.machine) return;
 
         // boundingSphere is likely dynamically added or exists in machine
-        const boundingSphere = this.machine.boundingSphere;
+        // const boundingSphere = this.machine.boundingSphere;
         this.displayMessage("Generating geometry");
 
         this.update2D();
         this.update3D();
 
-        if (this.machine.mtype === "3D Printer" && boundingSphere === false && this.machine.boundingSphere)
-            this.renderer.lookAt3DPrinter(this.machine.boundingSphere.center, this.machine.boundingSphere.radius);
+        // if (this.machine.mtype === "3D Printer" && boundingSphere === false && this.machine.boundingSphere)
+        //     this.renderer.lookAt3DPrinter(this.machine.boundingSphere.center, this.machine.boundingSphere.radius);
 
         if (this.machine.motionData && this.machine.motionData.error && this.machine.motionData.error.length !== 0) {
             this.displayMessage(this.machine.motionData.error[0], true);
@@ -474,8 +464,8 @@ export class Controller {
     }
 
     updateWireframe() {
-        if (!this.machine) return;
-        this.renderer.addMesh("2DWorkpieceDash", this.machine.meshWorkpiece);
+        // if (!this.machine) return;
+        // this.renderer.addMesh("2DWorkpieceDash", this.machine.meshWorkpiece);
     }
 
     runAnimation(animate: any) {

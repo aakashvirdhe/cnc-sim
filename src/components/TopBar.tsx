@@ -1,10 +1,21 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useController } from '../contexts/ControllerContext';
+import NewProjectDialog from './dialogs/NewProjectDialog';
+import OpenProjectDialog from './dialogs/OpenProjectDialog';
+import OpenMachineDialog from './dialogs/OpenMachineDialog';
+import WorkpieceDimensionsDialog from './dialogs/WorkpieceDimensionsDialog';
+import MaterialSettingsDialog from './dialogs/MaterialSettingsDialog';
+import ToolDialog from './dialogs/ToolDialog';
+
+type DialogType = 'NEW_PROJECT' | 'OPEN_PROJECT' | 'OPEN_MACHINE' | 'WORKPIECE' | 'MATERIAL' | 'TOOL' | null;
 
 const TopBar: React.FC = () => {
-    const [projectInfo, setProjectInfo] = React.useState({ name: '', machine: '' });
+    const { controller } = useController();
+    const [projectInfo, setProjectInfo] = useState({ name: '', machine: '' });
+    const [activeDialog, setActiveDialog] = useState<DialogType>(null);
 
-    React.useEffect(() => {
+    useEffect(() => {
         const handleProjectUpdate = (e: CustomEvent) => {
             if (e.detail) {
                 setProjectInfo({
@@ -18,8 +29,8 @@ const TopBar: React.FC = () => {
 
         // Initial check if controller exists (might be racing)
         const checkController = setInterval(() => {
-            if ((window as any).controller && (window as any).controller.storage) {
-                const storage = (window as any).controller.storage;
+            if (controller && controller.storage) {
+                const storage = controller.storage;
                 if (storage.header) {
                     setProjectInfo({
                         name: storage.header.name || 'Untitled',
@@ -34,7 +45,13 @@ const TopBar: React.FC = () => {
             window.removeEventListener('projectUpdated', handleProjectUpdate as EventListener);
             clearInterval(checkController);
         };
-    }, []);
+    }, [controller]);
+
+    const handleExport = () => {
+        if (controller) {
+            controller.exportToOBJ();
+        }
+    };
 
     return (
         <div id="topMenu">
@@ -43,21 +60,24 @@ const TopBar: React.FC = () => {
                     <li>
                         <div><span title="File" className="icon icon-folder-open"></span>File</div>
                         <ul>
-                            <li>
+                            <li onClick={() => setActiveDialog('NEW_PROJECT')}>
                                 <div title="New Project">New</div>
                             </li>
-                            <li>
+                            <li onClick={() => setActiveDialog('OPEN_PROJECT')}>
                                 <div title="Open Project">Open</div>
+                            </li>
+                            <li onClick={handleExport}>
+                                <div title="Export File">Export OBJ/STL</div>
                             </li>
                         </ul>
                     </li>
                     <li>
                         <div><span title="Machine" className="icon icon-cogs"></span>Machine</div>
                         <ul>
-                            <li>
+                            <li onClick={() => setActiveDialog('OPEN_MACHINE')}>
                                 <div title="Open Machine">Open Machine</div>
                             </li>
-                            <li>
+                            <li onClick={() => setActiveDialog('TOOL')}>
                                 <div title="Tool">Tool</div>
                             </li>
                         </ul>
@@ -65,8 +85,11 @@ const TopBar: React.FC = () => {
                     <li>
                         <div><span title="Workpiece" className="icon icon-codepen"></span>Workpiece</div>
                         <ul>
-                            <li>
+                            <li onClick={() => setActiveDialog('WORKPIECE')}>
                                 <div id="openWorkpiece" title="Workpiece dimensions">Dimensions</div>
+                            </li>
+                            <li onClick={() => setActiveDialog('MATERIAL')}>
+                                <div title="Material Settings">Material</div>
                             </li>
                         </ul>
                     </li>
@@ -77,7 +100,14 @@ const TopBar: React.FC = () => {
                 Project: {projectInfo.name} - {projectInfo.machine}
             </div>
 
-            <span id="machineIcon"></span>
+            <span id="machineIcon" className={`icon-${projectInfo.machine.toLowerCase()}`}></span>
+
+            {activeDialog === 'NEW_PROJECT' && <NewProjectDialog onClose={() => setActiveDialog(null)} />}
+            {activeDialog === 'OPEN_PROJECT' && <OpenProjectDialog onClose={() => setActiveDialog(null)} />}
+            {activeDialog === 'OPEN_MACHINE' && <OpenMachineDialog onClose={() => setActiveDialog(null)} />}
+            {activeDialog === 'WORKPIECE' && <WorkpieceDimensionsDialog onClose={() => setActiveDialog(null)} />}
+            {activeDialog === 'MATERIAL' && <MaterialSettingsDialog onClose={() => setActiveDialog(null)} />}
+            {activeDialog === 'TOOL' && <ToolDialog onClose={() => setActiveDialog(null)} />}
         </div>
     );
 };

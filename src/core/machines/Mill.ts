@@ -32,6 +32,7 @@ export class Mill extends Machine {
         this.initWebGL();
         this.initGeometry2D();
         this.initGeometry3D();
+
         this.create2DWorkpieceLimits();
     }
 
@@ -87,12 +88,13 @@ export class Mill extends Machine {
 
     initGeometry3D() {
         this.material3D.shading = THREE.FlatShading;
-        const tempDim = Math.max(this.workpiece.x, this.workpiece.y) + this.tool.radius * 2;
+        const toolRadius = this.machine.tool.radius;
+        const tempDim = Math.max(this.workpiece.x, this.workpiece.y) + toolRadius * 2;
         this.renderDimensions = new THREE.Vector3(tempDim, tempDim, this.workpiece.z);
-        const minX = Math.round(this.tool.radius * this.renderResolution / this.renderDimensions.x);
-        const minY = Math.round(this.tool.radius * this.renderResolution / this.renderDimensions.y);
-        const maxX = Math.round((parseFloat(this.workpiece.x) + this.tool.radius) * this.renderResolution / this.renderDimensions.x);
-        const maxY = Math.round((parseFloat(this.workpiece.y) + this.tool.radius) * this.renderResolution / this.renderDimensions.y);
+        const minX = Math.round(toolRadius * this.renderResolution / this.renderDimensions.x);
+        const minY = Math.round(toolRadius * this.renderResolution / this.renderDimensions.y);
+        const maxX = Math.round((parseFloat(this.workpiece.x) + toolRadius) * this.renderResolution / this.renderDimensions.x);
+        const maxY = Math.round((parseFloat(this.workpiece.y) + toolRadius) * this.renderResolution / this.renderDimensions.y);
 
         const geometry = new THREE.PlaneBufferGeometry(this.workpiece.x, this.workpiece.y,
             maxX - minX + 1, maxY - minY + 1);

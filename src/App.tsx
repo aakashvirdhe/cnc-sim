@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import './App.css'
 import TopBar from './components/TopBar';
 import BottomBar from './components/BottomBar';
@@ -15,12 +15,17 @@ import { Lathe } from './core/machines/Lathe';
 import { Mill } from './core/machines/Mill';
 import { Motion } from './core/Motion';
 import { Controller } from './core/Controller';
-import { Printer } from './core/machines/Printer';
+// import { Printer } from './core/machines/Printer';
+import { ControllerProvider } from './contexts/ControllerContext';
+
+// Declare Stats global
+declare const Stats: any;
 
 function App() {
   const [editorWidth, setEditorWidth] = useState(400);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const [controller, setController] = useState<Controller | null>(null);
 
   // Initialize controller and UI (existing logic)
   useEffect(() => {
@@ -37,52 +42,54 @@ function App() {
     (window as any).CWS.Machine = Machine;
     (window as any).CWS.Lathe = Lathe;
     (window as any).CWS.Mill = Mill;
-    (window as any).CWS.Printer = Printer; // Shim Printer
-    (window as any).CWS.SHADER = {}; // Shaders are internal to TS now, but if legacy code accesses CWS.SHADER, we might need to expose it.
-    // controller.js doesn't access CWS.SHADER directly except maybe passing it? 
-    // Actually machine.js accessed it. But we migrated machine.js.
-    // So as long as controller.js doesn't use it, we are fine.
+    // (window as any).CWS.Printer = Printer; // Shim Printer
+    (window as any).CWS.SHADER = {};
 
     setTimeout(() => {
       // TODO
       // Lathe tool
       // Check input forms
-      (window as any).controller = new Controller(
+      const newController = new Controller(
         new EditorService(),
         new StorageService({ useCompression: true, useLocalStorage: true }),
         new Renderer("renderer1"),
-        new Motion(),
-        true
+        new Motion()
       );
+      (window as any).controller = newController;
+      setController(newController);
 
-      (window as any).ui = new (window as any).CWS.UI((window as any).controller);
-      var stats = (window as any).ui.createStats(true);
+      // Initialize Stats
+      const stats = new Stats();
+      stats.domElement.style.position = 'absolute';
+      stats.domElement.style.bottom = '0px';
+      stats.domElement.style.right = '0px';
+      const container = document.getElementById("canvasContainer");
+      if (container) container.appendChild(stats.domElement);
 
       function onWindowResize() {
-        (window as any).controller.windowResize();
-        (window as any).ui.resize();
+        newController.windowResize();
       }
 
       function animate() {
         requestAnimationFrame(animate);
         stats.update();
-        (window as any).controller.motion.run();
-        (window as any).controller.render();
+        newController.motion.run();
+        newController.render();
       }
       animate();
 
       window.addEventListener('resize', onWindowResize, false);
-      (window as any).controller.runInterpreter();
+      newController.runInterpreter();
     }, 100);
   }, []);
 
   // Handle Resizing Logic
   useEffect(() => {
-    if ((window as any).controller) {
-      (window as any).controller.windowResize();
+    if (controller) {
+      controller.windowResize();
       if ((window as any).ui) (window as any).ui.resize();
     }
-  }, [editorWidth, isCollapsed]);
+  }, [editorWidth, isCollapsed, controller]);
 
   const startResizing = useCallback(() => {
     setIsDragging(true);
@@ -121,49 +128,47 @@ function App() {
 
   const toggleCollapse = () => {
     setIsCollapsed(!isCollapsed);
-    if (!isCollapsed) {
-      // Saving previous width could be added, but defaulting to current `editorWidth` state preservation is fine
-      // Actually when collapsed, width effectively becomes 0 for the column, but we handle that in render/style
-    }
   };
 
   const currentEditorWidth = isCollapsed ? 0 : editorWidth;
   const gridTemplateColumns = `1fr auto ${currentEditorWidth}px`;
 
   return (
-    <div id="app-root" style={{
-      display: 'grid',
-      gridTemplateColumns: gridTemplateColumns,
-      height: '100vh',
-      width: '100vw',
-      overflow: 'hidden',
-      backgroundColor: 'var(--bg-primary)',
-      color: 'var(--text-primary)',
-      fontFamily: 'var(--font-family)'
-    }}>
-      <div className="control-column">
-        <TopBar />
-        <CanvasView />
-        <BottomBar />
-      </div>
+    <ControllerProvider controller={controller}>
+      <div id="app-root" style={{
+        display: 'grid',
+        gridTemplateColumns: gridTemplateColumns,
+        height: '100vh',
+        width: '100vw',
+        overflow: 'hidden',
+        backgroundColor: 'var(--bg-primary)',
+        color: 'var(--text-primary)',
+        fontFamily: 'var(--font-family)'
+      }}>
+        <div className="control-column">
+          <TopBar />
+          <CanvasView />
+          <BottomBar />
+        </div>
 
-      <div
-        className={`resizer-gutter ${isDragging ? 'dragging' : ''}`}
-        onMouseDown={startResizing}
-      >
-        <button
-          className="collapse-btn"
-          onClick={(e) => { e.stopPropagation(); toggleCollapse(); }}
-          title={isCollapsed ? "Expand Editor" : "Collapse Editor"}
+        <div
+          className={`resizer-gutter ${isDragging ? 'dragging' : ''}`}
+          onMouseDown={startResizing}
         >
-          {isCollapsed ? "◀" : "▶"}
-        </button>
-      </div>
+          <button
+            className="collapse-btn"
+            onClick={(e) => { e.stopPropagation(); toggleCollapse(); }}
+            title={isCollapsed ? "Expand Editor" : "Collapse Editor"}
+          >
+            {isCollapsed ? "◀" : "▶"}
+          </button>
+        </div>
 
-      <div className="editor-column" style={{ width: currentEditorWidth, display: isCollapsed ? 'none' : 'block' }}>
-        <CodeEditor />
+        <div className="editor-column" style={{ width: currentEditorWidth, display: isCollapsed ? 'none' : 'block' }}>
+          <CodeEditor />
+        </div>
       </div>
-    </div>
+    </ControllerProvider>
   )
 }
 
