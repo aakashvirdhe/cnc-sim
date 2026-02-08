@@ -49,14 +49,14 @@ const BottomBar: React.FC = () => {
                 Simulate
             </span> */}
 
-            <span title="Play Animation" onClick={() => controller?.runAnimation(undefined)}>
+            <span title="Play Animation" onClick={() => controller?.runAnimation(undefined)} style={{ marginLeft: '20px' }}>
                 Animate
             </span>
 
             <span
                 title="Toggle Toolpath"
                 id="run2DIcon"
-                style={{ color: activeToggles.toolpath ? 'green' : 'red' }}
+                style={{ color: activeToggles.toolpath ? '#007acc' : '#888', border: activeToggles.toolpath ? '1px solid #007acc' : '1px solid #444' }}
                 onClick={toggleToolpath}
             >
                 Toolpath
@@ -65,13 +65,13 @@ const BottomBar: React.FC = () => {
             <span
                 title="Toggle Job Preview"
                 id="run3DIcon"
-                style={{ color: activeToggles.jobPreview ? 'green' : 'red' }}
+                style={{ color: activeToggles.jobPreview ? '#007acc' : '#888', border: activeToggles.jobPreview ? '1px solid #007acc' : '1px solid #444' }}
                 onClick={toggleJobPreview}
             >
                 Job Preview
             </span>
 
-            <span title="Save Project" id="saveIcon" onClick={handleSave} style={{ color: 'green' }}>
+            <span title="Save Project" id="saveIcon" onClick={handleSave} style={{ color: '#4caf50' }}>
                 Save
             </span>
         </div>
