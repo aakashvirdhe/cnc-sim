@@ -46,13 +46,6 @@ const TopBar: React.FC = () => {
             clearInterval(checkController);
         };
     }, [controller]);
-
-    const handleExport = () => {
-        if (controller) {
-            controller.exportToOBJ();
-        }
-    };
-
     return (
         <div id="topMenu">
             <nav>
@@ -65,9 +58,6 @@ const TopBar: React.FC = () => {
                             </li>
                             <li onClick={() => setActiveDialog('OPEN_PROJECT')}>
                                 <div title="Open Project">Open</div>
-                            </li>
-                            <li onClick={handleExport}>
-                                <div title="Export File">Export OBJ/STL</div>
                             </li>
                         </ul>
                     </li>
@@ -96,8 +86,8 @@ const TopBar: React.FC = () => {
                     <li onClick={() => window.dispatchEvent(new CustomEvent('toggleCodeGuide', { detail: true }))}>
                         <div title="G Code Guide"><span className="icon icon-info"></span>Guide</div>
                     </li>
-                </ul>
-            </nav>
+                </ul >
+            </nav >
 
             <div id="projectInfoDisplay">
                 Project: {projectInfo.name} - {projectInfo.machine}
@@ -111,7 +101,7 @@ const TopBar: React.FC = () => {
             {activeDialog === 'WORKPIECE' && <WorkpieceDimensionsDialog onClose={() => setActiveDialog(null)} />}
             {activeDialog === 'MATERIAL' && <MaterialSettingsDialog onClose={() => setActiveDialog(null)} />}
             {activeDialog === 'TOOL' && <ToolDialog onClose={() => setActiveDialog(null)} />}
-        </div>
+        </div >
     );
 };
 

@@ -533,7 +533,13 @@ export class Controller {
         if (!this.machine) return;
         if (this.run2D === true) {
             this.machine.create2DWorkpiece();
-            if (this.machine.mesh2D) this.machine.mesh2D.visible = true;
+            if (this.machine.mesh2D) {
+                this.machine.mesh2D.visible = true;
+                if (this.machine.mesh2D.animation) {
+                    this.machine.mesh2D.animation.step = this._simulationSpeed;
+                    this.machine.mesh2D.animation.stepMode = this._executionMode;
+                }
+            }
         }
         else {
             if (this.machine.mesh2D) this.machine.mesh2D.visible = false;
@@ -544,7 +550,13 @@ export class Controller {
         if (!this.machine) return;
         if (this.run3D === true) {
             this.machine.create3DWorkpiece();
-            if (this.machine.mesh3D) this.machine.mesh3D.visible = true;
+            if (this.machine.mesh3D) {
+                this.machine.mesh3D.visible = true;
+                if (this.machine.mesh3D.animation) {
+                    this.machine.mesh3D.animation.step = this._simulationSpeed;
+                    this.machine.mesh3D.animation.stepMode = this._executionMode;
+                }
+            }
         }
         else {
             if (this.machine.mesh3D) this.machine.mesh3D.visible = false;

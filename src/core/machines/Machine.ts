@@ -150,7 +150,7 @@ export abstract class Machine {
                 this.end = 0;
                 this.currentLine = -1;
                 if (this.onLineChange) this.onLineChange(-1);
-                geometry.setDrawRange(0, 0);
+                geometry.setDrawRange(0, Infinity);
             },
             touggleAnimation: function () {
                 if (this.animationState) {
@@ -176,20 +176,21 @@ export abstract class Machine {
                             return false;
                         }
 
-                        const oldLine = geometry.attributes.lines ? geometry.attributes.lines.array[Math.min(this.end, this.size - 1)] : -1;
+                        const oldLine = geometry.attributes.lines ? geometry.attributes.lines.array[Math.floor(Math.min(this.end, this.size - 1))] : -1;
 
                         // Increment
                         this.end += this.step * this.dataSize;
 
                         // Skip non-drawing segments
-                        while (this.end < this.size && geometry.attributes.vcolor.array[this.end] >= 2) {
+                        while (this.end < this.size && geometry.attributes.vcolor.array[Math.floor(this.end)] >= 2) {
                             this.end += 2;
                         }
 
                         if (this.end > this.size) this.end = this.size;
 
                         // Get new line number after increment
-                        const newLine = geometry.attributes.lines ? geometry.attributes.lines.array[Math.min(this.end, this.size - 1)] : -1;
+                        const safeIdx = Math.floor(Math.min(this.end, this.size - 1));
+                        const newLine = geometry.attributes.lines ? geometry.attributes.lines.array[safeIdx] : -1;
 
                         if (newLine !== oldLine && this.onLineChange && newLine !== undefined && newLine !== -1) {
                             this.onLineChange(newLine);
