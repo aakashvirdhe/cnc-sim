@@ -11,6 +11,8 @@ const BottomBar: React.FC = () => {
     });
 
     const [speed, setSpeed] = useState(1.0);
+    const [executionMode, setExecutionMode] = useState<'continuous' | 'step'>('continuous');
+    const [isSimulating, setIsSimulating] = useState(false);
 
     const [showSpeedMenu, setShowSpeedMenu] = useState(false);
     const speedOptions = [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0];
@@ -23,11 +25,23 @@ const BottomBar: React.FC = () => {
                 jobPreview: controller.run3D
             });
             setSpeed(controller.simulationSpeed);
+            setExecutionMode(controller.executionMode);
+            setIsSimulating(controller.isSimulating);
 
             const handleSpeedChange = (e: any) => {
                 setSpeed(e.detail);
             };
             window.addEventListener('simulationSpeedChanged', handleSpeedChange);
+
+            const handleModeChange = (e: any) => {
+                setExecutionMode(e.detail);
+            };
+            window.addEventListener('executionModeChanged', handleModeChange);
+
+            const handleStateChange = (e: any) => {
+                setIsSimulating(e.detail);
+            };
+            window.addEventListener('simulationStateChanged', handleStateChange);
 
             const handleClickOutside = (e: MouseEvent) => {
                 const target = e.target as HTMLElement;
@@ -39,6 +53,8 @@ const BottomBar: React.FC = () => {
 
             return () => {
                 window.removeEventListener('simulationSpeedChanged', handleSpeedChange);
+                window.removeEventListener('executionModeChanged', handleModeChange);
+                window.removeEventListener('simulationStateChanged', handleStateChange);
                 window.removeEventListener('click', handleClickOutside);
             };
         }
@@ -80,11 +96,29 @@ const BottomBar: React.FC = () => {
         }
     };
 
+    const toggleExecutionMode = () => {
+        if (controller) {
+            const newMode = executionMode === 'continuous' ? 'step' : 'continuous';
+            controller.executionMode = newMode;
+            setExecutionMode(newMode);
+        }
+    };
+
+    const handleNextLine = () => {
+        if (controller) {
+            controller.nextStep();
+        }
+    };
+
     return (
         <div id="bottomMenu">
             <div className="bottom-left">
-                <span title="Play Animation" className="bottom-btn" onClick={() => controller?.runAnimation(undefined)}>
-                    Animate
+                <span
+                    title={isSimulating ? "Stop Simulation" : "Start Simulation"}
+                    className={`bottom-btn ${isSimulating ? 'simulate-active' : ''}`}
+                    onClick={() => controller?.runAnimation(undefined)}
+                >
+                    {isSimulating ? 'Stop' : 'Simulate'}
                 </span>
 
                 <span
@@ -109,6 +143,22 @@ const BottomBar: React.FC = () => {
             </div>
 
             <div className="bottom-center speed-control-wrapper">
+                <span
+                    className="bottom-btn mode-toggle-btn"
+                    onClick={toggleExecutionMode}
+                >
+                    Mode: {executionMode === 'continuous' ? 'Multi' : 'Single'}
+                </span>
+
+                {executionMode === 'step' && (
+                    <span
+                        className="bottom-btn next-line-btn"
+                        onClick={handleNextLine}
+                    >
+                        Next Line
+                    </span>
+                )}
+
                 <span
                     className="bottom-btn speed-trigger-btn"
                     onClick={(e) => { e.stopPropagation(); setShowSpeedMenu(!showSpeedMenu); }}

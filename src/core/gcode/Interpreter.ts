@@ -199,6 +199,7 @@ export class Interpreter {
 
         l.ctype = 0;
         l.cmd = cmd;
+        l.line = cmd.line!.lineNumber;
         if (this.machineType == "3D Printer" && cmd.param.a == undefined && cmd.param.e == undefined)
             return;
         this.outputCommands.push(l);
@@ -219,6 +220,7 @@ export class Interpreter {
         this.position.z = l.z1;
         l.ctype = 1;
         l.cmd = cmd;
+        l.line = cmd.line!.lineNumber;
         this.outputCommands.push(l);
     }
 
@@ -310,6 +312,7 @@ export class Interpreter {
             this.position.z = l.z1;
             l.ctype = 2;
             l.cmd = cmd;
+            l.line = cmd.line!.lineNumber;
             this.outputCommands.push(l);
         }
 
@@ -323,6 +326,7 @@ export class Interpreter {
         this.position.z = l.z1;
         l.ctype = 2;
         l.cmd = cmd;
+        l.line = cmd.line!.lineNumber;
         this.outputCommands.push(l);
 
         this.position.x = cmd.param.xyz.x;
@@ -431,6 +435,7 @@ export class Interpreter {
         this.position.z = l.z1;
         l.ctype = 3;
         l.cmd = cmd;
+        l.line = cmd.line!.lineNumber;
         this.outputCommands.push(l);
 
         this.position.x = cmd.param.xyz.x;

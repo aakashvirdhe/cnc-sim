@@ -191,7 +191,7 @@ body {
 	transition: all 0.2s;
 	border: 1px solid #444;
 	color: #fff;
-	min-width: 70px;
+	min-width: 80px;
 }
 
 #bottomMenu span.bottom-btn:hover {
@@ -200,13 +200,42 @@ body {
 }
 
 #bottomMenu .toggle-btn {
-	min-width: 85px;
+	min-width: 90px;
+}
+
+.mode-toggle-btn {
+	background: #444 !important;
+	border-color: #555 !important;
+	min-width: 110px !important;
+}
+
+.next-line-btn {
+	background: #ffa500 !important;
+	/* Orange for attention */
+	border-color: #ff8c00 !important;
+	color: #000 !important;
+	min-width: 90px !important;
 }
 
 .speed-trigger-btn {
 	background: #007acc !important;
 	border-color: #007acc !important;
-	min-width: 95px;
+	min-width: 85px !important;
+}
+
+.simulate-active {
+	background: #ec1c24 !important;
+	/* Red for Stop */
+	border-color: #c41219 !important;
+	color: white !important;
+}
+
+/* Ace Editor Execution Highlight */
+.executing-line-marker {
+	position: absolute;
+	background: rgba(255, 0, 0, 0.2);
+	border-left: 4px solid #ff0000;
+	z-index: 20;
 }
 
 .speed-trigger-btn:hover {

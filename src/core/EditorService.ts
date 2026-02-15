@@ -53,4 +53,40 @@ export class EditorService {
     readOnly(ro: boolean) {
         this.editor.setReadOnly(ro);
     }
+
+    private activeMarker: any = null;
+
+    highlightLine(line: number) {
+        if (line <= 0) {
+            this.clearHighlight();
+            return;
+        }
+        const session = this.editor.getSession();
+
+        // Remove existing marker
+        if (this.activeMarker !== null) {
+            session.removeMarker(this.activeMarker);
+        }
+
+        // Ace is 0-indexed, our line numbers are 1-indexed
+        const row = line - 1;
+
+        // Add new marker
+        const Range = ace.require('ace/range').Range;
+        this.activeMarker = session.addMarker(
+            new Range(row, 0, row, 1),
+            "executing-line-marker",
+            "fullLine"
+        );
+
+        // Scroll into view
+        this.editor.scrollToLine(row, true, true, () => { });
+    }
+
+    clearHighlight() {
+        if (this.activeMarker !== null) {
+            this.editor.getSession().removeMarker(this.activeMarker);
+            this.activeMarker = null;
+        }
+    }
 }

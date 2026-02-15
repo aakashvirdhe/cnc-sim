@@ -31,6 +31,7 @@ function runCode(data: any) {
     const l = interpreter.outputCommands.length * 2 * 3;
     const positions = new Float32Array(l);
     const color = new Float32Array(interpreter.outputCommands.length * 2);
+    const lines = new Float32Array(interpreter.outputCommands.length * 2);
     let i = 0;
     let c = 0;
 
@@ -48,10 +49,13 @@ function runCode(data: any) {
         color[c] = cmd.ctype;
         color[c + 1] = cmd.ctype;
 
+        lines[c] = cmd.line;
+        lines[c + 1] = cmd.line;
+
         c += 2;
         i += 6;
     }
-    return { positions: positions, color: color, error: errList };
+    return { positions: positions, color: color, lines: lines, error: errList };
 }
 
 self.onmessage = function (ev) {

@@ -26,6 +26,8 @@ export class Controller {
     machine: any; // Type as Machine (Lathe | Mill)
     material3D: any;
     _simulationSpeed: number;
+    _executionMode: 'continuous' | 'step';
+    _isSimulating: boolean;
 
     constructor(editor: EditorService, storage: StorageService, renderer: Renderer, motion: Motion) {
         this.storage = storage;
@@ -38,6 +40,8 @@ export class Controller {
         this._run3D = true;
         this._run2D = true;
         this._simulationSpeed = 1.0;
+        this._executionMode = 'continuous';
+        this._isSimulating = false;
         // this._runWireframe = true;
 
         this.createDatGUI();
@@ -122,14 +126,44 @@ export class Controller {
         // Update physics/animation step in active meshes
         if (this.renderer['2DWorkpiece'] && this.renderer['2DWorkpiece'].animation) {
             this.renderer['2DWorkpiece'].animation.step = this._simulationSpeed;
+            this.renderer['2DWorkpiece'].animation.stepMode = this._executionMode;
         }
         // If 3D workpiece has animation in future, update it here too
         if (this.renderer['3DWorkpiece'] && this.renderer['3DWorkpiece'].animation) {
             this.renderer['3DWorkpiece'].animation.step = this._simulationSpeed;
+            this.renderer['3DWorkpiece'].animation.stepMode = this._executionMode;
         }
 
         // Trigger a re-render or UI update if needed
         window.dispatchEvent(new CustomEvent('simulationSpeedChanged', { detail: this._simulationSpeed }));
+    }
+
+    get executionMode() {
+        return this._executionMode;
+    }
+
+    set executionMode(val: 'continuous' | 'step') {
+        this._executionMode = val;
+        if (this.renderer['2DWorkpiece'] && this.renderer['2DWorkpiece'].animation) {
+            const anim = this.renderer['2DWorkpiece'].animation;
+            anim.stepMode = this._executionMode;
+
+            // Reset simulation when switching modes to ensure consistency
+            if (anim.isSessionActive) {
+                anim.stopAndReset();
+                this.isSimulating = false;
+            }
+        }
+        window.dispatchEvent(new CustomEvent('executionModeChanged', { detail: this._executionMode }));
+    }
+
+    get isSimulating() {
+        return this._isSimulating;
+    }
+
+    set isSimulating(val: boolean) {
+        this._isSimulating = val;
+        window.dispatchEvent(new CustomEvent('simulationStateChanged', { detail: this._isSimulating }));
     }
     // get runWireframe() {
     //     return this._runWireframe;
@@ -467,15 +501,26 @@ export class Controller {
     updateWorkpieceDraw() {
         if (!this.machine) return;
 
-        // boundingSphere is likely dynamically added or exists in machine
-        // const boundingSphere = this.machine.boundingSphere;
+        this.editor.clearHighlight();
         this.displayMessage("Generating geometry");
 
         this.update2D();
         this.update3D();
 
-        // if (this.machine.mtype === "3D Printer" && boundingSphere === false && this.machine.boundingSphere)
-        //     this.renderer.lookAt3DPrinter(this.machine.boundingSphere.center, this.machine.boundingSphere.radius);
+        if (this.renderer['2DWorkpiece'] && this.renderer['2DWorkpiece'].animation) {
+            const anim = this.renderer['2DWorkpiece'].animation;
+            anim.onLineChange = (line: number) => {
+                this.editor.highlightLine(line);
+                window.dispatchEvent(new CustomEvent('simulationLineChanged', { detail: line }));
+            };
+            anim.onSimulationEnd = () => {
+                this.isSimulating = false;
+                this.editor.clearHighlight();
+                // Reset the simulation to the beginning as requested
+                anim.stopAndReset();
+            };
+            anim.stepMode = this._executionMode;
+        }
 
         if (this.machine.motionData && this.machine.motionData.error && this.machine.motionData.error.length !== 0) {
             this.displayMessage(this.machine.motionData.error[0], true);
@@ -512,8 +557,36 @@ export class Controller {
     }
 
     runAnimation(animate: any) {
-        this.renderer.animate(animate, "2DWorkpiece");
-        this.renderer.animate(animate, "3DWorkpiece");
+        if (this.renderer['2DWorkpiece'] && this.renderer['2DWorkpiece'].animation) {
+            const anim = this.renderer['2DWorkpiece'].animation;
+
+            // If already active, stop and reset
+            if (anim.isSessionActive) {
+                anim.stopAndReset();
+                this.isSimulating = false;
+                this.renderer.animate(false, "3DWorkpiece");
+                return;
+            }
+
+            // Otherwise Start Session
+            this.isSimulating = true;
+            if (this._executionMode === 'step') {
+                this.nextStep();
+            } else {
+                this.renderer.animate(animate, "2DWorkpiece");
+                this.renderer.animate(animate, "3DWorkpiece");
+            }
+        }
+    }
+
+    nextStep() {
+        if (this.renderer['2DWorkpiece'] && this.renderer['2DWorkpiece'].animation) {
+            const anim = this.renderer['2DWorkpiece'].animation;
+            this.isSimulating = true;
+            anim.animationState = true;
+            anim.isSessionActive = true;
+            anim.animate(true);
+        }
     }
 
     displayMessage(message?: string, error?: boolean) {

@@ -125,6 +125,9 @@ export abstract class Machine {
         // if I'm doing something that could break the code later. 
         geometry.addAttribute('position', new THREE.BufferAttribute(this.motionData.positions, 3));
         geometry.addAttribute('vcolor', new THREE.BufferAttribute(this.motionData.color, 1));
+        if (this.motionData.lines) {
+            geometry.addAttribute('lines', new THREE.BufferAttribute(this.motionData.lines, 1));
+        }
         geometry.setDrawRange(0, Infinity);
         this.mesh2D.visible = true;
         this.meshes.mesh2D = true;
@@ -136,29 +139,71 @@ export abstract class Machine {
             dataSize: 2,
             step: 1,
             animationState: false,
-            touggleAnimation: function () {
-                this.animationState = !this.animationState;
+            isSessionActive: false,
+            stepMode: 'continuous', // 'continuous' or 'step'
+            currentLine: -1,
+            onLineChange: null as ((line: number) => void) | null,
+            onSimulationEnd: null as (() => void) | null,
+            stopAndReset: function () {
+                this.animationState = false;
+                this.isSessionActive = false;
                 this.end = 0;
-                this.animate(this.animationState);
+                this.currentLine = -1;
+                if (this.onLineChange) this.onLineChange(-1);
+                geometry.setDrawRange(0, 0);
+            },
+            touggleAnimation: function () {
+                if (this.animationState) {
+                    this.animationState = false;
+                    this.animate(false);
+                } else {
+                    this.animationState = true;
+                    this.isSessionActive = true;
+                    if (this.end >= this.size) {
+                        this.end = 0;
+                    }
+                    this.animate(true);
+                }
             },
             animate: function (b: boolean) {
                 if (b === true) {
                     this.next = function () {
-                        if (this.end > this.size) {
+                        if (!this.animationState) return false;
+                        if (this.end >= this.size) {
                             this.animationState = false;
+                            this.isSessionActive = false;
+                            if (this.onSimulationEnd) this.onSimulationEnd();
                             return false;
                         }
+
+                        const oldLine = geometry.attributes.lines ? geometry.attributes.lines.array[Math.min(this.end, this.size - 1)] : -1;
+
+                        // Increment
                         this.end += this.step * this.dataSize;
-                        while (geometry.attributes.vcolor.array[this.end] >= 2) {
+
+                        // Skip non-drawing segments
+                        while (this.end < this.size && geometry.attributes.vcolor.array[this.end] >= 2) {
                             this.end += 2;
                         }
+
+                        if (this.end > this.size) this.end = this.size;
+
+                        // Get new line number after increment
+                        const newLine = geometry.attributes.lines ? geometry.attributes.lines.array[Math.min(this.end, this.size - 1)] : -1;
+
+                        if (newLine !== oldLine && this.onLineChange && newLine !== undefined && newLine !== -1) {
+                            this.onLineChange(newLine);
+                            if (this.stepMode === 'step') {
+                                this.animationState = false;
+                            }
+                        }
+
                         geometry.setDrawRange(this.beg, this.end);
                         return true;
                     }
                 }
                 else {
                     this.next = function () { return false; };
-                    geometry.setDrawRange(0, Infinity);
                 }
             },
             next: function () { return false; },
