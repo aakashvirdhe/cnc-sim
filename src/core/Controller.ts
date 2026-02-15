@@ -25,6 +25,7 @@ export class Controller {
     controls: any;
     machine: any; // Type as Machine (Lathe | Mill)
     material3D: any;
+    _simulationSpeed: number;
 
     constructor(editor: EditorService, storage: StorageService, renderer: Renderer, motion: Motion) {
         this.storage = storage;
@@ -36,6 +37,7 @@ export class Controller {
         // this.autoRun = false;
         this._run3D = true;
         this._run2D = true;
+        this._simulationSpeed = 1.0;
         // this._runWireframe = true;
 
         this.createDatGUI();
@@ -107,6 +109,27 @@ export class Controller {
     set run3D(val) {
         this._run3D = val;
         this.update3D();
+        this.render(true);
+    }
+
+    get simulationSpeed() {
+        return this._simulationSpeed;
+    }
+
+    set simulationSpeed(val: number) {
+        this._simulationSpeed = Math.max(0.1, Math.min(2.0, val));
+
+        // Update physics/animation step in active meshes
+        if (this.renderer['2DWorkpiece'] && this.renderer['2DWorkpiece'].animation) {
+            this.renderer['2DWorkpiece'].animation.step = this._simulationSpeed;
+        }
+        // If 3D workpiece has animation in future, update it here too
+        if (this.renderer['3DWorkpiece'] && this.renderer['3DWorkpiece'].animation) {
+            this.renderer['3DWorkpiece'].animation.step = this._simulationSpeed;
+        }
+
+        // Trigger a re-render or UI update if needed
+        window.dispatchEvent(new CustomEvent('simulationSpeedChanged', { detail: this._simulationSpeed }));
     }
     // get runWireframe() {
     //     return this._runWireframe;
@@ -132,6 +155,7 @@ export class Controller {
         // When opening the just-created project, we don't need to save "current" again 
         // because createNewProject already sets it as current.
         this.openProject(projectName, false);
+        this.simulationSpeed = 1.0; // Reset to 1x
         return projectName;
     }
 

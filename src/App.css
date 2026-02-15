@@ -174,14 +174,121 @@ body {
 	align-items: center;
 }
 
-#bottomMenu span {
-	padding: 0 15px;
-	line-height: 30px;
+#bottomMenu span.bottom-btn {
+	padding: 5px 10px;
+	margin: 0 4px;
+	line-height: 24px;
+	height: 22px;
 	cursor: pointer !important;
 	display: inline-flex;
 	align-items: center;
+	justify-content: center;
 	gap: 5px;
 	font-weight: bold;
+	font-size: 13px;
+	background: rgba(255, 255, 255, 0.07);
+	border-radius: 4px;
+	transition: all 0.2s;
+	border: 1px solid #444;
+	color: #fff;
+	min-width: 70px;
+}
+
+#bottomMenu span.bottom-btn:hover {
+	background: rgba(255, 255, 255, 0.15);
+	border-color: #007acc;
+}
+
+#bottomMenu .toggle-btn {
+	min-width: 85px;
+}
+
+.speed-trigger-btn {
+	background: #007acc !important;
+	border-color: #007acc !important;
+	min-width: 95px;
+}
+
+.speed-trigger-btn:hover {
+	background: #00a2ff !important;
+}
+
+.speed-menu-overlay {
+	position: absolute;
+	bottom: calc(100% + 15px);
+	left: 50%;
+	transform: translateX(-50%);
+	background: #1f1f1f;
+	border: 1px solid #333;
+	border-radius: 8px;
+	width: 160px;
+	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+	z-index: 2000;
+	padding: 8px 0;
+	animation: slideUp 0.15s ease-out;
+	overflow: hidden;
+}
+
+@keyframes slideUp {
+	from {
+		transform: translateX(-50%) translateY(10px);
+		opacity: 0;
+	}
+
+	to {
+		transform: translateX(-50%) translateY(0);
+		opacity: 1;
+	}
+}
+
+.speed-slider-container {
+	padding: 12px 15px;
+	background: #252525;
+	border-bottom: 1px solid #333;
+}
+
+.youtube-slider {
+	width: 100%;
+	height: 4px;
+	background: #444;
+	border-radius: 2px;
+	appearance: none;
+	outline: none;
+}
+
+.youtube-slider::-webkit-slider-thumb {
+	appearance: none;
+	width: 12px;
+	height: 12px;
+	background: #007acc;
+	border-radius: 50%;
+	cursor: pointer;
+	border: 2px solid #fff;
+}
+
+.speed-presets {
+	max-height: 200px;
+	overflow-y: auto;
+}
+
+.speed-preset-item {
+	padding: 8px 15px;
+	font-size: 13px;
+	cursor: pointer;
+	transition: background 0.2s;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.speed-preset-item:hover {
+	background: rgba(255, 255, 255, 0.1);
+}
+
+.speed-preset-item.active {
+	color: #007acc;
+	font-weight: bold;
+	background: rgba(0, 122, 204, 0.1);
 }
 
 #editor {
