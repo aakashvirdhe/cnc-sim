@@ -1,73 +1,70 @@
-# React + TypeScript + Vite
+# CNC Web Simulator v1.0
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A high-performance, web-based CNC simulator for lathe and milling operations. Built with modern web technologies, it allows for real-time G-code interpretation, material removal visualization, and precision execution tracking.
 
-Currently, two official plugins are available:
+## 🚀 Key Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Multi-Machine Simulation**: Switch between **Mill** and **Lathe** environments with machine-specific physics and visualization.
+- **Advanced Simulation Controls**:
+  - **Simulate/Stop Toggle**: Robust session management with auto-reset functionality.
+  - **Variable Speed**: Control simulation speed from **0.25x up to 2.0x**.
+  - **Execution Modes**: Toggle between **Continuous** execution and **Single-Line (Step)** mode for meticulous debugging.
+- **Intelligent G-Code Editor**:
+  - Based on **Ace Editor** with custom CNC syntax highlighting.
+  - **Real-Time Highlighting**: The editor automatically scrolls to and highlights the line currently being executed.
+- **Integrated G-Code Guide**: Built-in reference manual for standard G and M codes.
+- **Workpiece & Material Management**:
+  - Configurable stock dimensions and tool parameters.
+  - Premium material aesthetics (Metal, Wood, Plastic, etc.) with realistic lighting.
+- **Persistence**: Automatically saves your project state, machine settings, and G-code locally.
 
-## React Compiler
+## 🛠️ Technology Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Core**: [React 19](https://react.dev/), [TypeScript](https://www.typescriptlang.org/)
+- **Graphics**: [Three.js](https://threejs.org/) (r74 optimized for simulation performance)
+- **Editor**: [Ace Editor](https://ace.c9.io/)
+- **Build Tool**: [Vite](https://vitejs.dev/)
+- **Deployment**: [GitHub Actions](https://github.com/features/actions) for automated [GitHub Pages](https://pages.github.com/) hosting.
 
-## Expanding the ESLint configuration
+## 💻 Local Development
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Prerequisites
+- [Node.js](https://nodejs.org/) (v18 or higher recommended)
+- [npm](https://www.npmjs.com/)
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Installation
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/aakashvirdhe/cnc-sim.git
+   cd cnc-sim
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Start the development server:
+   ```bash
+   npm run dev
+   ```
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## 🌐 Deployment
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+This project is configured for automated deployment to GitHub Pages.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+1. Go to your repository **Settings > Pages**.
+2. Under **Build and deployment**, set **Source** to **GitHub Actions**.
+3. Every push to the `main` branch will automatically build and publish the site.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+The site will be live at: `https://[your-username].github.io/cnc-sim/`
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## 🗺️ Roadmap
+
+- **v1.0 (Current)**: Stable release with core simulation, speed controls, and step mode.
+- **v2.0 (Planned)**:
+  - real time material removal
+  - tool visibility
+  - spindle visibility
+  - Enhanced DX (Developer Experience) with more granular diagnostics.
+
+---
+*Created and maintained by Aakash Virdhe*
