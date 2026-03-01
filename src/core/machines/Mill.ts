@@ -419,72 +419,9 @@ export class Mill extends Machine {
             }
         }
 
-        const index = geometry.index;
         const attributes = geometry.attributes;
-        const groups = geometry.groups;
-
-        const posArray = attributes.position.array;
-        const normArray = attributes.normal.array;
-
-        for (let i = 0, il = normArray.length; i < il; i++) {
-            normArray[i] = 0;
-        }
-
-        let vA, vB, vC;
-        const pA = new THREE.Vector3();
-        const pB = new THREE.Vector3();
-        const pC = new THREE.Vector3();
-        const cb = new THREE.Vector3();
-        const ab = new THREE.Vector3();
-
-        const indices = index.array;
-        if (groups.length === 0) {
-            geometry.addGroup(0, indices.length);
-        }
-        for (let j = 0, jl = groups.length; j < jl; ++j) {
-            const group = groups[j];
-            const start = group.start;
-            const count = group.count;
-
-            for (let i = start, il = start + count; i < il; i += 3) {
-                vA = indices[i + 0] * 3;
-                vB = indices[i + 1] * 3;
-                vC = indices[i + 2] * 3;
-
-                pA.fromArray(posArray, vA);
-                pB.fromArray(posArray, vB);
-                pC.fromArray(posArray, vC);
-
-                cb.subVectors(pC, pB);
-                ab.subVectors(pA, pB);
-                cb.cross(ab);
-
-                normArray[vA] += cb.x;
-                normArray[vA + 1] += cb.y;
-                normArray[vA + 2] += cb.z;
-
-                normArray[vB] += cb.x;
-                normArray[vB + 1] += cb.y;
-                normArray[vB + 2] += cb.z;
-
-                normArray[vC] += cb.x;
-                normArray[vC + 1] += cb.y;
-                normArray[vC + 2] += cb.z;
-            }
-        }
-
-        let x, y, z, n;
-        for (let i = 0, il = normArray.length; i < il; i += 3) {
-            x = normArray[i];
-            y = normArray[i + 1];
-            z = normArray[i + 2];
-            n = 1.0 / Math.sqrt(x * x + y * y + z * z);
-            normArray[i] *= n;
-            normArray[i + 1] *= n;
-            normArray[i + 2] *= n;
-        }
-
         attributes.position.needsUpdate = true;
+        geometry.computeVertexNormals();
         attributes.normal.needsUpdate = true;
 
         this.mesh3D.position.x = -this.workpiece.x / 2;

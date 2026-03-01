@@ -250,4 +250,24 @@ export class StorageService {
             this.storage.data = {};
         }
     }
+
+    downloadCurrentGCode() {
+        const codeText = this.code;
+        if (!codeText) return;
+        const blob = new Blob([codeText], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+
+        let filename = 'workspace.nc';
+        if (this.currentProjectHeaderCache && this.currentProjectHeaderCache.name) {
+            filename = `${this.currentProjectHeaderCache.name}.nc`;
+        }
+
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    }
 }

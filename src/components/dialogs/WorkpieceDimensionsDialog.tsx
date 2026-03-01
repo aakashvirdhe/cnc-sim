@@ -55,6 +55,9 @@ const WorkpieceDimensionsDialog: React.FC<WorkpieceDimensionsDialogProps> = ({ o
                             <li>
                                 <label htmlFor="x">Diameter</label>
                                 <input type="text" name="x" value={dimensions.x || ''} onChange={handleChange} />
+                                <div style={{ fontSize: '11px', color: '#888', marginTop: '2px', paddingLeft: '110px' }}>
+                                    Specifies the total diameter of the cylinder (Radius = X / 2).
+                                </div>
                             </li>
                             <li>
                                 <label htmlFor="z">Length</label>

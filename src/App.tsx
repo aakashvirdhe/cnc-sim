@@ -21,6 +21,7 @@ import { ControllerProvider } from './contexts/ControllerContext';
 import Stats from 'stats.js';
 
 import CodeGuide from './components/CodeGuide';
+import SimulatorUsageGuide from './components/dialogs/SimulatorUsageGuide';
 
 function App() {
   const [editorWidth, setEditorWidth] = useState(400);
@@ -28,12 +29,24 @@ function App() {
   const [isDragging, setIsDragging] = useState(false);
   const [controller, setController] = useState<Controller | null>(null);
   const [showCodeGuide, setShowCodeGuide] = useState(false);
+  const [showSimulatorGuide, setShowSimulatorGuide] = useState(false);
   const [projectName, setProjectName] = useState("Untitled");
 
   useEffect(() => {
     const handleCodeGuideToggle = (e: CustomEvent) => {
       setShowCodeGuide(e.detail);
     };
+
+    const handleSpecificGuide = (e: CustomEvent) => {
+      if (e.detail === 'GCODE') {
+        setShowCodeGuide(true);
+        setShowSimulatorGuide(false);
+      } else if (e.detail === 'USAGE') {
+        setShowSimulatorGuide(true);
+        setShowCodeGuide(false);
+      }
+    };
+
     // Also listen for project updates to show correct name in guide
     const handleProjectUpdate = (e: CustomEvent) => {
       if (e.detail && e.detail.projectName) {
@@ -42,9 +55,11 @@ function App() {
     };
 
     window.addEventListener('toggleCodeGuide', handleCodeGuideToggle as EventListener);
+    window.addEventListener('openSpecificGuide', handleSpecificGuide as EventListener);
     window.addEventListener('projectUpdated', handleProjectUpdate as EventListener);
     return () => {
       window.removeEventListener('toggleCodeGuide', handleCodeGuideToggle as EventListener);
+      window.removeEventListener('openSpecificGuide', handleSpecificGuide as EventListener);
       window.removeEventListener('projectUpdated', handleProjectUpdate as EventListener);
     };
   }, []);
@@ -206,6 +221,10 @@ function App() {
         <div className="editor-column" style={{ width: currentEditorWidth, display: isCollapsed ? 'none' : 'block' }}>
           <CodeEditor />
         </div>
+
+        {showSimulatorGuide && (
+          <SimulatorUsageGuide onClose={() => setShowSimulatorGuide(false)} />
+        )}
       </div>
     </ControllerProvider>
   )

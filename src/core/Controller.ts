@@ -504,29 +504,33 @@ export class Controller {
         this.editor.clearHighlight();
         this.displayMessage("Generating geometry");
 
-        this.update2D();
-        this.update3D();
+        // Use a short setTimeout to yield the main thread so the browser can repaint the DOM
+        // and actually show the "Generating geometry" message before blocking on calculations.
+        setTimeout(() => {
+            this.update2D();
+            this.update3D();
 
-        if (this.renderer['2DWorkpiece'] && this.renderer['2DWorkpiece'].animation) {
-            const anim = this.renderer['2DWorkpiece'].animation;
-            anim.onLineChange = (line: number) => {
-                this.editor.highlightLine(line);
-                window.dispatchEvent(new CustomEvent('simulationLineChanged', { detail: line }));
-            };
-            anim.onSimulationEnd = () => {
-                this.isSimulating = false;
-                this.editor.clearHighlight();
-                // Reset the simulation to the beginning as requested
-                anim.stopAndReset();
-            };
-            anim.stepMode = this._executionMode;
-        }
+            if (this.renderer['2DWorkpiece'] && this.renderer['2DWorkpiece'].animation) {
+                const anim = this.renderer['2DWorkpiece'].animation;
+                anim.onLineChange = (line: number) => {
+                    this.editor.highlightLine(line);
+                    window.dispatchEvent(new CustomEvent('simulationLineChanged', { detail: line }));
+                };
+                anim.onSimulationEnd = () => {
+                    this.isSimulating = false;
+                    this.editor.clearHighlight();
+                    // Reset the simulation to the beginning as requested
+                    anim.stopAndReset();
+                };
+                anim.stepMode = this._executionMode;
+            }
 
-        if (this.machine.motionData && this.machine.motionData.error && this.machine.motionData.error.length !== 0) {
-            this.displayMessage(this.machine.motionData.error[0], true);
-        }
-        else
-            this.displayMessage();
+            if (this.machine.motionData && this.machine.motionData.error && this.machine.motionData.error.length !== 0) {
+                this.displayMessage(this.machine.motionData.error[0], true);
+            }
+            else
+                this.displayMessage();
+        }, 10);
     }
 
     update2D() {
