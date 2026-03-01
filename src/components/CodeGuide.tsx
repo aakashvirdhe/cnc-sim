@@ -32,7 +32,7 @@ const CodeGuide: React.FC<CodeGuideProps> = ({ onBack, currentProjectName = "Com
         { code: 'G61/G64', name: 'Path Control Mode', desc: 'Exact stop check (G61) or continuous path (G64).', example: 'G64' },
         { code: 'G90', name: 'Absolute Positioning', desc: 'Coordinates are relative to the origin.', example: 'G90' },
         { code: 'G91', name: 'Incremental Positioning', desc: 'Coordinates are relative to the current position.', example: 'G91' },
-        { code: 'G92', name: 'Coordinate System Offset', desc: 'Sets current position to specified value.', example: 'G92 X0 Y0 Z0' },
+        { code: 'G92', name: 'Coordinate System Shift / Offset', desc: 'SIMULATOR BEHAVIOR: Directly ADDS the specified value to subsequent coordinate commands. (e.g., G92 Z100 makes a Z0 command move to absolute physical machine coordinate Z100).', example: 'G92 X0 Y0 Z100' },
         { code: 'G93/G94', name: 'Feed Rate Mode', desc: 'Inverse time (G93) or units per minute (G94).', example: 'G94' },
     ];
 
