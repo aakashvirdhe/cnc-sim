@@ -1,0 +1,82 @@
+/* BOTTOM BAR */
+#bottomMenu {
+	background-color: var(--bg-secondary);
+	border-top: 1px solid var(--border-color);
+	display: flex !important;
+	align-items: center;
+	justify-content: flex-start;
+	padding: 0 1rem;
+	gap: 12px;
+	box-shadow: var(--shadow-sm);
+	z-index: 20;
+	height: 54px !important;
+	box-sizing: border-box;
+}
+
+.bottom-left,
+.bottom-center,
+.bottom-right {
+	display: flex;
+	gap: 12px;
+	align-items: center;
+}
+
+#bottomMenu span {
+	background-color: var(--bg-tertiary);
+	color: var(--text-primary);
+	padding: 8px 12px;
+	border-radius: 4px;
+	cursor: pointer !important;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	/* Center text/icons */
+	font-size: 0.9rem;
+	font-weight: 500;
+	transition: all 0.2s ease;
+	border: 1px solid var(--border-color);
+	width: 120px !important;
+	/* Fixed Width */
+	height: 36px !important;
+	/* Fixed Height */
+	padding: 0 !important;
+	box-sizing: border-box;
+	display: inline-flex !important;
+	justify-content: center !important;
+	align-items: center !important;
+}
+
+#bottomMenu span.active {
+	background-color: var(--accent-color) !important;
+	color: white !important;
+	border-color: var(--accent-color) !important;
+	box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+#bottomMenu span:hover {
+	background-color: var(--accent-color);
+	color: white !important;
+	border-color: var(--accent-color);
+	transform: translateY(-1px);
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+#bottomMenu span:active {
+	transform: translateY(0);
+	box-shadow: none;
+}
+
+#bottomMenu span [class^="icon-"] {
+	font-size: 1.1em;
+}
+
+/* Save button specific - FIX: Grouped with others */
+#saveIcon {
+	margin-left: 0 !important;
+	background-color: var(--bg-tertiary) !important;
+}
+
+#saveIcon:hover {
+	background-color: var(--success-color) !important;
+	border-color: var(--success-color) !important;
+}

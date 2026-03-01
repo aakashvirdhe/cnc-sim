@@ -1,5 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
+import './TopBar.css';
 import { useController } from '../contexts/ControllerContext';
 import NewProjectDialog from './dialogs/NewProjectDialog';
 import OpenProjectDialog from './dialogs/OpenProjectDialog';

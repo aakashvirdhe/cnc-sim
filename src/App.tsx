@@ -1,4 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
+import './assets/jquery-ui.css';
+import './assets/icons.css';
+import './components/dialogs/DialogStyles.css';
 import './App.css'
 import TopBar from './components/TopBar';
 import BottomBar from './components/BottomBar';

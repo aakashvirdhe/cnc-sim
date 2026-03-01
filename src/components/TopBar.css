@@ -1,0 +1,177 @@
+/* TOP BAR */
+#topMenu {
+	background-color: var(--bg-secondary);
+	border-bottom: 1px solid var(--border-color);
+	display: flex !important;
+	align-items: center;
+	padding: 0 1rem;
+	box-shadow: var(--shadow-sm);
+	z-index: 20;
+	height: 48px;
+	/* Fixed height */
+	width: 100%;
+	box-sizing: border-box;
+}
+
+#topMenu nav {
+	height: 100%;
+	position: static !important;
+	display: flex;
+	align-items: center;
+	margin: 0 !important;
+	width: auto !important;
+	background: transparent !important;
+	flex-grow: 1;
+}
+
+#topMenu nav>ul {
+	display: flex;
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	height: 100%;
+	background: transparent !important;
+	width: auto !important;
+}
+
+#topMenu nav>ul>li {
+	position: relative;
+	height: 100%;
+	display: flex;
+	align-items: center;
+}
+
+/* Menu Item Trigger */
+#topMenu nav>ul>li>div {
+	padding: 0 1rem;
+	color: var(--text-primary) !important;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	font-size: 0.9rem;
+	font-weight: 500;
+	user-select: none;
+	width: auto !important;
+	top: 0 !important;
+	box-sizing: border-box;
+	border-bottom: 3px solid transparent;
+	/* Thick consistent border */
+	margin: 0;
+}
+
+#topMenu nav>ul>li>div:hover {
+	background-color: var(--bg-tertiary);
+	color: var(--accent-hover) !important;
+	border-bottom: 3px solid var(--accent-color);
+	padding: 0 1rem;
+	/* Enforce padding stay same */
+	margin: 0;
+}
+
+#topMenu nav>ul>li>div span {
+	position: static !important;
+	background: transparent !important;
+	height: auto !important;
+	width: auto !important;
+	display: inline-block !important;
+}
+
+#topMenu nav>ul>li>div [class^="icon-"] {
+	margin-right: 12px;
+	/* Increased spacing */
+	font-size: 1.1em;
+	color: var(--text-secondary);
+	line-height: normal !important;
+}
+
+#topMenu nav>ul>li:hover>div [class^="icon-"] {
+	color: var(--accent-hover);
+}
+
+/* Dropdown Menu */
+#topMenu nav>ul>li>ul {
+	position: absolute;
+	top: 100%;
+	left: 0;
+	background-color: var(--bg-secondary);
+	border: 1px solid var(--border-color);
+	border-radius: 0 0 4px 4px;
+	box-shadow: var(--shadow-md);
+	min-width: 200px;
+	display: none;
+	flex-direction: column;
+	padding: 4px 0;
+	z-index: 100;
+	height: auto !important;
+	opacity: 1 !important;
+	transition: none !important;
+}
+
+#topMenu nav>ul>li:hover>ul {
+	display: flex;
+}
+
+#topMenu nav>ul>li>ul>li {
+	width: 100%;
+	display: block !important;
+}
+
+#topMenu nav>ul>li>ul>li>div {
+	padding: 10px 16px;
+	color: var(--text-primary) !important;
+	display: flex;
+	align-items: center;
+	cursor: pointer;
+	transition: background-color 0.2s;
+	font-size: 0.9rem;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+#topMenu nav>ul>li>ul>li>div:hover {
+	background-color: var(--accent-color);
+	color: white !important;
+}
+
+/* Machine Icon (Right side of TopBar) */
+#machineIcon {
+	color: var(--text-secondary);
+	font-size: 1.5rem;
+	opacity: 0.8;
+	position: relative !important;
+	right: auto !important;
+	top: auto !important;
+	display: block;
+	margin-left: 0;
+}
+/* Fix TopBar Icon Spacing */
+#topMenu [class^="icon-"],
+#topMenu [class*=" icon-"] {
+	margin-right: 8px !important;
+}
+
+/* Ensure sub-menu items also have spacing */
+#topMenu ul ul li div [class^="icon-"] {
+	margin-right: 10px !important;
+}
+
+/* Project Info Display in TopBar */
+#projectInfoDisplay {
+	flex: 1;
+	text-align: center;
+	font-weight: 800;
+	color: var(--text-primary);
+	font-size: 1rem;
+	white-space: nowrap;
+	pointer-events: none;
+	font-family: var(--font-family);
+	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+	align-self: center;
+}
+
+/* Hide 3D Printer icon if it exists somehow */
+.icon-printer {
+	display: none !important;
+}

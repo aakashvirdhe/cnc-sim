@@ -1,0 +1,29 @@
+/* Canvas & Layout Fixes */
+#canvasContainer {
+	position: relative;
+	overflow: hidden;
+	width: 100%;
+	height: 100%;
+}
+
+/* Fix dat.GUI displacement - Strict Positioning */
+#gui,
+.dg.ac {
+	position: absolute !important;
+	top: 0px !important;
+	/* Top of canvas container */
+	right: 0 !important;
+	z-index: 1000 !important;
+	float: none !important;
+	height: auto !important;
+}
+
+/* Ensure Canvas doesn't move */
+/* Removed duplicate absolute positioning to let Grid handle layout */
+#canvasContainer {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	z-index: 1;
+}
+

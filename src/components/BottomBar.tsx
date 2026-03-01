@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import './BottomBar.css';
 import { useController } from '../contexts/ControllerContext';
 
 const BottomBar: React.FC = () => {

@@ -1,4 +1,5 @@
 import React from 'react';
+import { createPortal } from 'react-dom';
 
 interface DialogBaseProps {
     title: string;
@@ -9,7 +10,7 @@ interface DialogBaseProps {
 }
 
 const DialogBase: React.FC<DialogBaseProps> = ({ title, children, onClose, buttons, width = '400px' }) => {
-    return (
+    return createPortal(
         <div className="ui-dialog ui-widget ui-widget-content ui-corner-all ui-front ui-dialog-buttons ui-draggable ui-resizable"
             style={{
                 position: 'fixed',
@@ -39,7 +40,8 @@ const DialogBase: React.FC<DialogBaseProps> = ({ title, children, onClose, butto
                     {buttons}
                 </div>
             </div>
-        </div>
+        </div>,
+        document.body
     );
 };
 

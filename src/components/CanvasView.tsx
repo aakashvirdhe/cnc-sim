@@ -1,5 +1,6 @@
 
 import React from 'react';
+import './CanvasView.css';
 
 const CanvasView: React.FC = () => {
     return (
