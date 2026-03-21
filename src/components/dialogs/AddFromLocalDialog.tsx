@@ -37,7 +37,7 @@ const AddFromLocalDialog: React.FC<AddFromLocalDialogProps> = ({ fileData, onClo
     };
 
     return (
-        <DialogBase title="Add from Local" onClose={onClose}
+        <DialogBase title="Import Local File" onClose={onClose}
             buttons={
                 <>
                     <button type="button" className="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" onClick={handleYes}>
