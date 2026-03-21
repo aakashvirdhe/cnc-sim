@@ -9,6 +9,8 @@ import MaterialSettingsDialog from './dialogs/MaterialSettingsDialog';
 import ToolDialog from './dialogs/ToolDialog';
 import GuideSelectionDialog from './dialogs/GuideSelectionDialog';
 import SaveAsDialog from './dialogs/SaveAsDialog';
+import AddFromLocalDialog from './dialogs/AddFromLocalDialog';
+import ErrorDialog from './dialogs/ErrorDialog';
 
 type DialogType = 'NEW_PROJECT' | 'OPEN_PROJECT' | 'OPEN_MACHINE' | 'WORKPIECE' | 'MATERIAL' | 'TOOL' | 'GUIDE_SELECTION' | 'SAVE_AS' | null;
 
@@ -16,6 +18,44 @@ const TopBar: React.FC = () => {
     const { controller } = useController();
     const [projectInfo, setProjectInfo] = useState({ name: '', machine: '' });
     const [activeDialog, setActiveDialog] = useState<DialogType>(null);
+    const [localFileData, setLocalFileData] = useState<{name: string, content: string} | null>(null);
+    const [errorMsg, setErrorMsg] = useState<string | null>(null);
+    const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+    const handleFileSelected = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            try {
+                const content = event.target?.result as string;
+                if (!content || content.trim().length === 0) {
+                    setErrorMsg("File is empty or could not be read.");
+                    return;
+                }
+                if (content.indexOf('\0') !== -1) {
+                    setErrorMsg("File appears to be binary and cannot be processed.");
+                    return;
+                }
+                // Close any active dialogs like Open or New Project
+                setActiveDialog(null);
+                setLocalFileData({ name: file.name, content });
+            } catch (err) {
+                setErrorMsg("Error parsing file content.");
+            }
+        };
+        reader.onerror = () => {
+            setErrorMsg("Failed to read the file. It may be corrupted or permission denied.");
+        };
+        reader.readAsText(file);
+        
+        e.target.value = '';
+    };
+
+    const triggerLocalFileLoad = () => {
+        fileInputRef.current?.click();
+    };
 
     useEffect(() => {
         const handleProjectUpdate = (e: CustomEvent) => {
@@ -57,6 +97,9 @@ const TopBar: React.FC = () => {
                         <ul>
                             <li onClick={() => setActiveDialog('NEW_PROJECT')}>
                                 <div title="New Project">New</div>
+                            </li>
+                            <li onClick={triggerLocalFileLoad}>
+                                <div title="Browse">Browse</div>
                             </li>
                             <li onClick={() => setActiveDialog('OPEN_PROJECT')}>
                                 <div title="Open Project">Open</div>
@@ -107,8 +150,10 @@ const TopBar: React.FC = () => {
 
             <span id="machineIcon" className={`icon-${projectInfo.machine.toLowerCase()}`}></span>
 
-            {activeDialog === 'NEW_PROJECT' && <NewProjectDialog onClose={() => setActiveDialog(null)} />}
-            {activeDialog === 'OPEN_PROJECT' && <OpenProjectDialog onClose={() => setActiveDialog(null)} />}
+            <input type="file" style={{ display: 'none' }} ref={fileInputRef} accept=".nc,.txt,.gcode" onChange={handleFileSelected} />
+
+            {activeDialog === 'NEW_PROJECT' && <NewProjectDialog onClose={() => setActiveDialog(null)} onAddFromLocal={triggerLocalFileLoad} />}
+            {activeDialog === 'OPEN_PROJECT' && <OpenProjectDialog onClose={() => setActiveDialog(null)} onAddFromLocal={triggerLocalFileLoad} />}
             {activeDialog === 'SAVE_AS' && <SaveAsDialog onClose={() => setActiveDialog(null)} />}
             {activeDialog === 'OPEN_MACHINE' && <OpenMachineDialog onClose={() => setActiveDialog(null)} />}
             {activeDialog === 'WORKPIECE' && <WorkpieceDimensionsDialog onClose={() => setActiveDialog(null)} />}
@@ -123,6 +168,8 @@ const TopBar: React.FC = () => {
                     }}
                 />
             )}
+            {localFileData && <AddFromLocalDialog fileData={localFileData} onClose={() => setLocalFileData(null)} />}
+            {errorMsg && <ErrorDialog message={errorMsg} onClose={() => setErrorMsg(null)} />}
         </div >
     );
 };

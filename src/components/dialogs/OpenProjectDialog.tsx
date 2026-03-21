@@ -4,9 +4,10 @@ import { useController } from '../../contexts/ControllerContext';
 
 interface OpenProjectDialogProps {
     onClose: () => void;
+    onAddFromLocal?: () => void;
 }
 
-const OpenProjectDialog: React.FC<OpenProjectDialogProps> = ({ onClose }) => {
+const OpenProjectDialog: React.FC<OpenProjectDialogProps> = ({ onClose, onAddFromLocal }) => {
     const { controller } = useController();
     const [projects, setProjects] = useState<string[]>([]);
     const [selectedProjects, setSelectedProjects] = useState<Set<string>>(new Set());
@@ -87,22 +88,27 @@ const OpenProjectDialog: React.FC<OpenProjectDialogProps> = ({ onClose }) => {
                     <span className="ui-button-text">Cancel</span>
                 </button>
             }>
-            <div style={{ marginBottom: '10px', padding: '5px', borderBottom: '1px solid var(--border-color)' }}>
-                <button className="ui-button" style={{ marginRight: '5px', fontSize: '0.8em', width: 'auto' }} onClick={selectAll}>All</button>
-                <button className="ui-button" style={{ marginRight: '5px', fontSize: '0.8em', width: 'auto' }} onClick={selectNone}>None</button>
-                <button className="ui-button" style={{ marginLeft: '10px', fontSize: '0.8em', backgroundColor: 'var(--danger-color)', color: 'white', width: 'auto' }} onClick={handleDelete}>Delete</button>
+            <div style={{ marginBottom: '10px', padding: '5px', borderBottom: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '5px' }}>
+                <button className="ui-button" style={{ fontSize: '0.8em', width: 'auto' }} onClick={selectAll}>All</button>
+                <button className="ui-button" style={{ fontSize: '0.8em', width: 'auto' }} onClick={selectNone}>None</button>
+                <button className="ui-button" style={{ marginLeft: '5px', fontSize: '0.8em', backgroundColor: 'var(--danger-color)', color: 'white', width: 'auto' }} onClick={handleDelete}>Delete</button>
+                {onAddFromLocal && (
+                    <button className="ui-button" style={{ marginLeft: '5px', fontSize: '0.8em', width: 'auto' }} onClick={onAddFromLocal}>Browse</button>
+                )}
             </div>
-            <ul className="tableList">
-                {projects.map(p => (
-                    <li key={p} style={{ position: 'relative', paddingLeft: '40px', cursor: 'pointer' }} onClick={() => handleOpen(p)}>
-                        <input type="checkbox" className="project-checkbox" checked={selectedProjects.has(p)}
-                            onClick={(e) => { e.stopPropagation(); toggleSelection(p); }}
-                            onChange={() => { }} // Managed via onClick to allow row click separation
-                            style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', width: 'auto', margin: 0, zIndex: 10 }} />
-                        <span className="icon icon-file-text2"></span>{p}
-                    </li>
-                ))}
-            </ul>
+            <div style={{ maxHeight: '300px', overflowY: 'auto', overflowX: 'hidden' }}>
+                <ul className="tableList">
+                    {projects.map(p => (
+                        <li key={p} style={{ position: 'relative', paddingLeft: '40px', cursor: 'pointer' }} onClick={() => handleOpen(p)}>
+                            <input type="checkbox" className="project-checkbox" checked={selectedProjects.has(p)}
+                                onClick={(e) => { e.stopPropagation(); toggleSelection(p); }}
+                                onChange={() => { }} // Managed via onClick to allow row click separation
+                                style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', width: 'auto', margin: 0, zIndex: 10 }} />
+                            <span className="icon icon-file-text2"></span>{p}
+                        </li>
+                    ))}
+                </ul>
+            </div>
         </DialogBase>
     );
 };

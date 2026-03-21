@@ -4,9 +4,10 @@ import { useController } from '../../contexts/ControllerContext';
 
 interface NewProjectDialogProps {
     onClose: () => void;
+    onAddFromLocal?: () => void;
 }
 
-const NewProjectDialog: React.FC<NewProjectDialogProps> = ({ onClose }) => {
+const NewProjectDialog: React.FC<NewProjectDialogProps> = ({ onClose, onAddFromLocal }) => {
     const { controller } = useController();
     const [projectName, setProjectName] = useState('');
     const [machineType, setMachineType] = useState('Lathe');
@@ -22,6 +23,11 @@ const NewProjectDialog: React.FC<NewProjectDialogProps> = ({ onClose }) => {
         <DialogBase title="New Project" onClose={onClose}
             buttons={
                 <>
+                    {onAddFromLocal && (
+                    <button type="button" className="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" onClick={onAddFromLocal}>
+                        <span className="ui-button-text">Browse</span>
+                    </button>
+                    )}
                     <button type="button" className="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" onClick={handleCreate}>
                         <span className="ui-button-text">Create</span>
                     </button>
