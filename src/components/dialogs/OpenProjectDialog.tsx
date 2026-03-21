@@ -12,6 +12,7 @@ const OpenProjectDialog: React.FC<OpenProjectDialogProps> = ({ onClose, onAddFro
     const [projects, setProjects] = useState<string[]>([]);
     const [selectedProjects, setSelectedProjects] = useState<Set<string>>(new Set());
     const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+    const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {
         if (controller) {
@@ -88,23 +89,34 @@ const OpenProjectDialog: React.FC<OpenProjectDialogProps> = ({ onClose, onAddFro
                     <span className="ui-button-text">Cancel</span>
                 </button>
             }>
-            <div style={{ marginBottom: '10px', padding: '5px', borderBottom: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '5px' }}>
-                <button className="ui-button" style={{ fontSize: '0.8em', width: 'auto' }} onClick={selectAll}>All</button>
-                <button className="ui-button" style={{ fontSize: '0.8em', width: 'auto' }} onClick={selectNone}>None</button>
-                <button className="ui-button" style={{ marginLeft: '5px', fontSize: '0.8em', backgroundColor: 'var(--danger-color)', color: 'white', width: 'auto' }} onClick={handleDelete}>Delete</button>
-                {onAddFromLocal && (
-                    <button className="ui-button" style={{ marginLeft: '5px', fontSize: '0.8em', width: 'auto' }} onClick={onAddFromLocal}>Browse</button>
-                )}
+            <div style={{ marginBottom: '10px' }}>
+                <input 
+                    type="text" 
+                    placeholder="Search projects..." 
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="text ui-widget-content ui-corner-all"
+                    style={{ width: '100%', padding: '6px', boxSizing: 'border-box', marginBottom: '8px' }}
+                />
+                <div style={{ padding: '0px 5px 5px 5px', borderBottom: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '5px' }}>
+                    <button className="ui-button" style={{ fontSize: '0.8em', width: 'auto' }} onClick={selectAll}>All</button>
+                    <button className="ui-button" style={{ fontSize: '0.8em', width: 'auto' }} onClick={selectNone}>None</button>
+                    <button className="ui-button" style={{ marginLeft: '5px', fontSize: '0.8em', backgroundColor: 'var(--danger-color)', color: 'white', width: 'auto' }} onClick={handleDelete}>Delete</button>
+                    {onAddFromLocal && (
+                        <button className="ui-button" style={{ marginLeft: '5px', fontSize: '0.8em', width: 'auto' }} onClick={onAddFromLocal}>Browse</button>
+                    )}
+                </div>
             </div>
-            <div style={{ maxHeight: '300px', overflowY: 'auto', overflowX: 'hidden' }}>
+            <div style={{ height: '300px', overflowY: 'auto', overflowX: 'hidden' }}>
                 <ul className="tableList">
-                    {projects.map(p => (
+                    {projects.filter(p => p.toLowerCase().includes(searchTerm.toLowerCase())).map(p => (
                         <li key={p} style={{ position: 'relative', paddingLeft: '40px', cursor: 'pointer' }} onClick={() => handleOpen(p)}>
                             <input type="checkbox" className="project-checkbox" checked={selectedProjects.has(p)}
                                 onClick={(e) => { e.stopPropagation(); toggleSelection(p); }}
                                 onChange={() => { }} // Managed via onClick to allow row click separation
                                 style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', width: 'auto', margin: 0, zIndex: 10 }} />
-                            <span className="icon icon-file-text2"></span>{p}
+                            <span className="icon icon-file-text2" style={{ fontSize: '0.85em', marginRight: '6px' }}></span>
+                            {p}
                         </li>
                     ))}
                 </ul>
